@@ -1165,41 +1165,50 @@ async function loadApplications(filter){
   }
 }
 
+const SUPA_HEADERS = {
+  'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
+  'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
+  'Content-Type':'application/json',
+  'Prefer':'return=minimal'
+};
+const SUPA_BASE = 'https://tjeeibfrkleytoslwnnx.supabase.co/rest/v1/practitioners';
+
+async function updateStats(){
+  const resp = await fetch(SUPA_BASE+'?select=id,is_verified,status', {headers:SUPA_HEADERS});
+  const all  = await resp.json();
+  if(!Array.isArray(all)) return;
+  const total    = all.length;
+  const approved = all.filter(r=>r.is_verified===true).length;
+  const pending  = all.filter(r=>!r.is_verified&&r.status!=='rejected').length;
+  const rejected = all.filter(r=>r.status==='rejected').length;
+  document.getElementById('statTotal').textContent    = total;
+  document.getElementById('statApproved').textContent = approved;
+  document.getElementById('statPending').textContent  = pending;
+  document.getElementById('statRejected').textContent = rejected;
+}
+
 async function approveApp(id){
-  // Use service role via direct REST for admin updates
-  const resp = await fetch(
-    'https://tjeeibfrkleytoslwnnx.supabase.co/rest/v1/practitioners?id=eq.'+id,
-    { method:'PATCH',
-      headers:{
-        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
-        'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
-        'Content-Type':'application/json',
-        'Prefer':'return=minimal'
-      },
-      body:JSON.stringify({is_verified:true, status:'approved'})
-    }
+  const resp = await fetch(SUPA_BASE+'?id=eq.'+id,
+    { method:'PATCH', headers:SUPA_HEADERS,
+      body:JSON.stringify({is_verified:true, status:'approved'}) }
   );
   if(!resp.ok){alert('Error approving: '+await resp.text());return;}
-  alert('✓ Application approved!');
-  loadApplications(document.getElementById('filterSelect').value);
+  // Wait briefly then reload list and stats
+  await new Promise(r=>setTimeout(r,400));
+  await loadApplications(document.getElementById('filterSelect').value);
+  await updateStats();
 }
 
 async function rejectApp(id){
   if(!confirm('Are you sure you want to reject this application?'))return;
-  const resp = await fetch(
-    'https://tjeeibfrkleytoslwnnx.supabase.co/rest/v1/practitioners?id=eq.'+id,
-    { method:'PATCH',
-      headers:{
-        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
-        'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
-        'Content-Type':'application/json',
-        'Prefer':'return=minimal'
-      },
-      body:JSON.stringify({status:'rejected'})
-    }
+  const resp = await fetch(SUPA_BASE+'?id=eq.'+id,
+    { method:'PATCH', headers:SUPA_HEADERS,
+      body:JSON.stringify({status:'rejected'}) }
   );
   if(!resp.ok){alert('Error rejecting: '+await resp.text());return;}
-  loadApplications(document.getElementById('filterSelect').value);
+  await new Promise(r=>setTimeout(r,400));
+  await loadApplications(document.getElementById('filterSelect').value);
+  await updateStats();
 }
 
 async function viewProfile(id){
