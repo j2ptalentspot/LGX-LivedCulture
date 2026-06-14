@@ -155,7 +155,7 @@
   .step-pane.active { display: block; }
 
   /* Form fields */
-  .field-group { margin-bottom: 24px; }
+  .field-group { margin-bottom: 16px; }
   .field-group label {
     display: block; font-size: 13px; font-weight: 600;
     color: var(--navy); margin-bottom: 7px;
@@ -183,22 +183,23 @@
 
   /* Checkbox grid */
   .check-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 8px; margin-top: 4px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 5px; margin-top: 6px;
   }
   .check-item {
-    display: flex; align-items: center; gap: 9px;
-    padding: 10px 13px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px; cursor: pointer;
-    font-size: 13px; color: var(--ink);
+    display: flex; align-items: center; gap: 7px;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px; cursor: pointer;
+    font-size: 12.5px; color: var(--ink);
     transition: border-color .12s, background .12s;
     user-select: none;
+    line-height: 1.3;
   }
   .check-item:hover { border-color: var(--sky); }
   .check-item input { display: none; }
   .check-item .box {
-    width: 16px; height: 16px; border-radius: 4px;
+    width: 14px; height: 14px; border-radius: 3px;
     border: 1.5px solid var(--border);
     flex-shrink: 0; background: var(--white);
     display: flex; align-items: center; justify-content: center;
@@ -241,17 +242,17 @@
 
   /* Service card checkbox -->
   .service-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px; margin-top: 4px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 5px; margin-top: 4px;
   }
   .service-card {
     border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 16px;
+    border-radius: 7px; padding: 10px 12px;
     cursor: pointer; transition: border-color .12s, background .12s;
   }
   .service-card:hover { border-color: var(--sky); }
   .service-card.selected { border-color: var(--blue); background: #eef0ff; }
-  .service-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 3px; color: var(--navy); }
+  .service-card h4 { display:inline; font-size: 12.5px; font-weight: 600; color: var(--navy); vertical-align:middle; }
   .service-card p  { font-size: 11px; color: var(--mid); }
 
   /* Nav buttons */
@@ -329,6 +330,22 @@
     .field-row { grid-template-columns: 1fr; }
     .repeater-row { grid-template-columns: 1fr; }
   }
+
+  /* Service card checkbox style */
+  .service-card { position: relative; }
+  .service-card .sc-check {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 14px; height: 14px; border-radius: 3px;
+    border: 1.5px solid #d1d5db; background: white;
+    margin-right: 7px; flex-shrink: 0; vertical-align: middle;
+    font-size: 9px; color: white; transition: all .12s;
+  }
+  .service-card.selected .sc-check {
+    background: var(--blue); border-color: var(--blue);
+  }
+  .service-card h4 { display: inline; vertical-align: middle; }
+  .service-card p  { margin-top: 4px; padding-left: 21px; }
+
 </style>
 </head>
 <body>
@@ -386,7 +403,7 @@
   <p>Building a Progressive Practitioner Network of Coaches, Facilitators, OD &amp; L&amp;D Practitioners &amp; HR Leaders to create a positive impact on people, leadership &amp; culture, with a fine balance of tech-human integration.</p>
   <div class="hero-actions">
     <button class="btn-primary" onclick="document.getElementById('join').scrollIntoView({behavior:'smooth'})">Join the Network</button>
-    <button class="btn-ghost"   onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">Learn more</button>
+    <button class="btn-ghost"   onclick="openLearnMore()">Learn more</button>
   </div>
 </section>
 
@@ -444,14 +461,12 @@
     <p>Tell us about yourself. We review every application personally — you'll hear back within 48 hours.</p>
   </div>
 
-  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:33%"></div></div>
 
   <div class="steps" id="stepTabs">
-    <button class="step-tab active" data-step="1">① Identity</button>
-    <button class="step-tab"        data-step="2">② Expertise</button>
-    <button class="step-tab"        data-step="3">③ Research & videos</button>
-    <button class="step-tab"        data-step="4">④ Expert services</button>
-    <button class="step-tab"        data-step="5">⑤ Review & submit</button>
+    <button class="step-tab active" data-step="1">① Who you are</button>
+    <button class="step-tab"        data-step="2">② Your expertise</button>
+    <button class="step-tab"        data-step="3">③ Services & submit</button>
   </div>
 
   <form id="mainForm" onsubmit="return false;">
@@ -528,12 +543,10 @@
           <option>Other</option>
         </select>
       </div>
-    </div>
 
-    <!-- ─ STEP 2: Expertise ─ -->
-    <div class="step-pane" id="pane2">
+    <!-- Expertise (merged into Step 1) -->
       <div class="field-group">
-        <label>I work primarily as a <span>(select all that apply)</span></label>
+        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">I Work Primarily As A <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;select all that apply</span></div>
         <div class="check-grid" id="cg-role">
           <label class="check-item"><input type="checkbox" name="practitioner_type" value="Executive Coach"/><span class="box"></span>Executive Coach</label>
           <label class="check-item"><input type="checkbox" name="practitioner_type" value="Behavioral Coach"/><span class="box"></span>Behavioral Coach</label>
@@ -546,55 +559,60 @@
         </div>
       </div>
       <div class="field-group">
-        <label>Behavioral domains <span>(select all that apply)</span></label>
-        <div class="check-grid" id="cg-domain">
+        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Behavioral Domains <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;select all that apply</span></div>
+        <div class="check-grid" id="cg-domain" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px">
           <label class="check-item"><input type="checkbox" name="domains" value="Leadership"/><span class="box"></span>Leadership</label>
           <label class="check-item"><input type="checkbox" name="domains" value="Execution"/><span class="box"></span>Execution</label>
-          <label class="check-item"><input type="checkbox" name="domains" value="Collaboration"/><span class="box"></span>Collaboration</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Teamwork & Collaboration"/><span class="box"></span>Teamwork &amp; Collaboration</label>
           <label class="check-item"><input type="checkbox" name="domains" value="Mindset"/><span class="box"></span>Mindset</label>
           <label class="check-item"><input type="checkbox" name="domains" value="Culture"/><span class="box"></span>Culture</label>
-          <label class="check-item"><input type="checkbox" name="domains" value="Safety Behavior"/><span class="box"></span>Safety behavior</label>
-          <label class="check-item"><input type="checkbox" name="domains" value="Customer Centricity"/><span class="box"></span>Customer centricity</label>
-          <label class="check-item"><input type="checkbox" name="domains" value="Innovation"/><span class="box"></span>Innovation mindset</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Safety Behavior"/><span class="box"></span>Safety Behavior</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Customer Centricity"/><span class="box"></span>Customer Centricity</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Innovation Mindset"/><span class="box"></span>Innovation Mindset</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Crucial Conversations"/><span class="box"></span>Crucial Conversations</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Strategic Thinking"/><span class="box"></span>Strategic Thinking</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Emotional Quotient (EQ)"/><span class="box"></span>Emotional Quotient (EQ)</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Diversity & Inclusion"/><span class="box"></span>Diversity &amp; Inclusion</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Communication"/><span class="box"></span>Communication</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Situational Leadership"/><span class="box"></span>Situational Leadership</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Supervisory Development"/><span class="box"></span>Supervisory Development</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="TTT"/><span class="box"></span>TTT</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="POSH"/><span class="box"></span>POSH</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Conflict Management"/><span class="box"></span>Conflict Management</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Time Management"/><span class="box"></span>Time Management</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Technical Expertise"/><span class="box"></span>Technical Expertise</label>
+          <label class="check-item"><input type="checkbox" name="domains" value="Executive Presence"/><span class="box"></span>Executive Presence</label>
+          <label class="check-item" id="domain-other-item"><input type="checkbox" name="domains" value="Other" id="domain-other-cb"/><span class="box"></span>Other</label>
+        </div>
+        <div id="domain-other-field" style="display:none;margin-top:8px">
+          <input type="text" name="domains_other" placeholder="Please specify..." style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;outline:none"/>
         </div>
       </div>
       <div class="field-group">
-        <label>Frameworks you use <span>(select all that apply)</span></label>
-        <div class="check-grid" id="cg-fw">
-          <label class="check-item"><input type="checkbox" name="frameworks" value="SDT"/><span class="box"></span>Self-Determination Theory</label>
-          <label class="check-item"><input type="checkbox" name="frameworks" value="Nudge Theory"/><span class="box"></span>Nudge Theory</label>
-          <label class="check-item"><input type="checkbox" name="frameworks" value="COM-B"/><span class="box"></span>COM-B Model</label>
-          <label class="check-item"><input type="checkbox" name="frameworks" value="EAST"/><span class="box"></span>EAST Framework</label>
-          <label class="check-item"><input type="checkbox" name="frameworks" value="Tiny Habits"/><span class="box"></span>Tiny Habits (BJ Fogg)</label>
-          <label class="check-item"><input type="checkbox" name="frameworks" value="Appreciative Inquiry"/><span class="box"></span>Appreciative Inquiry</label>
-          <label class="check-item"><input type="checkbox" name="frameworks" value="CBT"/><span class="box"></span>Cognitive Behavioral</label>
-          <label class="check-item"><input type="checkbox" name="frameworks" value="Positive Psychology"/><span class="box"></span>Positive Psychology</label>
-          <label class="check-item"><input type="checkbox" name="frameworks" value="Behavioral Economics"/><span class="box"></span>Behavioral Economics</label>
-          <label class="check-item"><input type="checkbox" name="frameworks" value="NLP"/><span class="box"></span>NLP</label>
-        </div>
-      </div>
-      <div class="field-group">
-        <label>Industries served <span>(select all that apply)</span></label>
-        <div class="check-grid" id="cg-ind">
+        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Industries Served <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;select all that apply</span></div>
+        <div class="check-grid" id="cg-ind" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px">
           <label class="check-item"><input type="checkbox" name="industries" value="Manufacturing"/><span class="box"></span>Manufacturing</label>
           <label class="check-item"><input type="checkbox" name="industries" value="IT / Technology"/><span class="box"></span>IT / Technology</label>
           <label class="check-item"><input type="checkbox" name="industries" value="BFSI"/><span class="box"></span>BFSI</label>
-          <label class="check-item"><input type="checkbox" name="industries" value="Healthcare"/><span class="box"></span>Healthcare</label>
-          <label class="check-item"><input type="checkbox" name="industries" value="Pharma"/><span class="box"></span>Pharma</label>
+          <label class="check-item"><input type="checkbox" name="industries" value="Pharma / Healthcare / Bio-tech"/><span class="box"></span>Pharma / Healthcare / Bio-tech</label>
           <label class="check-item"><input type="checkbox" name="industries" value="Education"/><span class="box"></span>Education</label>
           <label class="check-item"><input type="checkbox" name="industries" value="Retail / FMCG"/><span class="box"></span>Retail / FMCG</label>
           <label class="check-item"><input type="checkbox" name="industries" value="Government / PSU"/><span class="box"></span>Government / PSU</label>
           <label class="check-item"><input type="checkbox" name="industries" value="Startup"/><span class="box"></span>Startup</label>
+          <label class="check-item" id="ind-other-item"><input type="checkbox" name="industries" value="Other" id="ind-other-cb"/><span class="box"></span>Other</label>
+        </div>
+        <div id="ind-other-field" style="display:none;margin-top:8px">
+          <input type="text" name="industries_other" placeholder="Please specify..." style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;outline:none"/>
         </div>
       </div>
       <div class="field-group">
-        <label>Brief bio <span>(2–3 sentences)</span></label>
+        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Brief Bio <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;2–3 sentences</span></div>
         <textarea name="bio" placeholder="What you do, who you work with, and what makes your approach distinctive..."></textarea>
       </div>
     </div>
 
-    <!-- ─ STEP 3: Research & Videos ─ -->
-    <div class="step-pane" id="pane3">
+    <!-- ─ STEP 2: Expertise & Research ─ -->
+    <div class="step-pane" id="pane2">
       <div class="field-group">
         <label>Research papers & articles <span>(add up to 5)</span></label>
         <div id="papers-list">
@@ -634,12 +652,12 @@
       </div>
 
       <div class="field-group" style="margin-top:32px">
-        <label>Research interests <span>(what you're currently exploring)</span></label>
+        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Research Interests <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;what you're currently exploring</span></div>
         <textarea name="research_interests" placeholder="e.g. Habit formation in hybrid teams, psychological safety measurement, nudge effectiveness in manufacturing environments..."></textarea>
       </div>
 
       <div class="field-group">
-        <label>What contribution would you like to make? <span>(select all that apply)</span></label>
+        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Contribution Interests <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;select all that apply</span></div>
         <div class="check-grid">
           <label class="check-item"><input type="checkbox" name="contribution" value="Nudge Lab blueprints"/><span class="box"></span>Nudge Lab blueprints</label>
           <label class="check-item"><input type="checkbox" name="contribution" value="Research inputs"/><span class="box"></span>Research inputs</label>
@@ -647,53 +665,113 @@
           <label class="check-item"><input type="checkbox" name="contribution" value="Articles"/><span class="box"></span>Write articles</label>
           <label class="check-item"><input type="checkbox" name="contribution" value="Peer review"/><span class="box"></span>Peer review</label>
           <label class="check-item"><input type="checkbox" name="contribution" value="Mentoring"/><span class="box"></span>Mentor others</label>
+          <label class="check-item"><input type="checkbox" name="contribution" value="Facilitation"/><span class="box"></span>Facilitation</label>
+          <label class="check-item"><input type="checkbox" name="contribution" value="Conducting Training Program"/><span class="box"></span>Conducting Training Program</label>
+          <label class="check-item"><input type="checkbox" name="contribution" value="Co-piloting OD Intervention"/><span class="box"></span>Co-piloting OD Intervention</label>
+          <label class="check-item"><input type="checkbox" name="contribution" value="L&D Content Development"/><span class="box"></span>L&amp;D Content Development</label>
+          <label class="check-item"><input type="checkbox" name="contribution" value="Leadership Coach"/><span class="box"></span>Leadership Coach</label>
+          <label class="check-item"><input type="checkbox" name="contribution" value="AI-led Coaching & Programs"/><span class="box"></span>AI-led Coaching &amp; Programs</label>
+          <label class="check-item"><input type="checkbox" name="contribution" value="HR Transformation Projects"/><span class="box"></span>HR Transformation Projects</label>
+          <label class="check-item"><input type="checkbox" name="contribution" value="Special L&D/OD Projects"/><span class="box"></span>Special L&amp;D/OD Projects</label>
         </div>
       </div>
-    </div>
 
-    <!-- ─ STEP 4: Expert Services ─ -->
-    <div class="step-pane" id="pane4">
+    <!-- Expert Services (merged into Step 2) -->
+
+      <!-- ── Subtle value nudge ── -->
+      <div style="
+        background: linear-gradient(135deg, #f0f4ff 0%, #fafbff 100%);
+        border: 1px solid #dde4ff;
+        border-left: 4px solid #4361ee;
+        border-radius: 12px;
+        padding: 28px 28px 24px;
+        margin-bottom: 32px;
+        position: relative;
+        overflow: hidden;
+      ">
+        <!-- Subtle background ripple mark -->
+        <svg style="position:absolute;right:-20px;top:-20px;opacity:0.06" width="160" height="160" viewBox="0 0 160 160" fill="none">
+          <circle cx="80" cy="80" r="30" fill="none" stroke="#4361ee" stroke-width="6"/>
+          <circle cx="80" cy="80" r="50" fill="none" stroke="#4361ee" stroke-width="4"/>
+          <circle cx="80" cy="80" r="70" fill="none" stroke="#4361ee" stroke-width="2"/>
+        </svg>
+
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4361ee;margin-bottom:12px">
+          Your expertise has a market
+        </div>
+
+        <h3 style="font-size:19px;font-weight:700;color:#1a1a2e;margin-bottom:12px;line-height:1.35">
+          Would you mind sharing a little more about your services or potential collaboration opportunity?
+        </h3>
+
+        <p style="font-size:14px;color:#4b5563;line-height:1.8;margin-bottom:16px">
+          We see real demand from organizations looking for exactly the kind 
+          of expertise you bring — whether it's coaching, facilitation, 
+          culture work, or L&D design. As this network grows, we actively 
+          connect practitioners with the right opportunities, briefs, and 
+          collaborations. The more we know about what you offer, the better 
+          we can work for you.
+        </p>
+
+        <p style="font-size:13px;color:#9ca3af;font-style:italic;margin-bottom:16px">
+          All fields below are optional — share only what you're comfortable with.
+        </p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:4px">
+          <div style="display:flex;align-items:center;gap:7px;font-size:13px;color:#374151">
+            <span style="width:20px;height:20px;background:#eef0ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#4361ee;flex-shrink:0">✓</span>
+            Matched to relevant client briefs
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:13px;color:#374151">
+            <span style="width:20px;height:20px;background:#eef0ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#4361ee;flex-shrink:0">✓</span>
+            Featured in our practitioner directory
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:13px;color:#374151">
+            <span style="width:20px;height:20px;background:#eef0ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#4361ee;flex-shrink:0">✓</span>
+            First access to platform pilot projects
+          </div>
+        </div>
+      </div>
+
       <div class="field-group">
-        <label>Services you offer <span>(select all that apply)</span></label>
-        <div class="service-grid" id="sg-services">
+        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Services You Offer / Potential Collaboration Opportunity<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;select all that apply</span></div>
+        <div class="service-grid" id="sg-services" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:5px">
           <div class="service-card" data-val="Executive Coaching" onclick="toggleService(this)">
-            <h4>Executive coaching</h4>
-            <p>1:1 coaching for senior leaders</p>
+            <h4>Executive Coaching</h4><p>1:1 coaching for senior leaders</p>
           </div>
           <div class="service-card" data-val="Leadership Workshops" onclick="toggleService(this)">
-            <h4>Leadership workshops</h4>
-            <p>Group facilitation & programs</p>
+            <h4>Leadership Workshops</h4><p>Group facilitation &amp; programs</p>
           </div>
           <div class="service-card" data-val="Behavioral Assessment" onclick="toggleService(this)">
-            <h4>Behavioral assessment</h4>
-            <p>Diagnostic tools & 360s</p>
+            <h4>Behavioral Assessment</h4><p>Diagnostic tools &amp; 360s</p>
           </div>
           <div class="service-card" data-val="Culture Transformation" onclick="toggleService(this)">
-            <h4>Culture transformation</h4>
-            <p>Organisation-wide change</p>
+            <h4>Culture Transformation</h4><p>Organisation-wide change</p>
           </div>
           <div class="service-card" data-val="L&D Program Design" onclick="toggleService(this)">
-            <h4>L&D program design</h4>
-            <p>Learning journeys & curricula</p>
+            <h4>L&amp;D Program Design</h4><p>Learning journeys &amp; curricula</p>
           </div>
           <div class="service-card" data-val="Nudge Design" onclick="toggleService(this)">
-            <h4>Nudge design</h4>
-            <p>Behavioral intervention architecture</p>
+            <h4>Nudge Design</h4><p>Behavioral intervention architecture</p>
           </div>
           <div class="service-card" data-val="Speaking / Keynote" onclick="toggleService(this)">
-            <h4>Speaking / keynote</h4>
-            <p>Conference & event speaking</p>
+            <h4>Speaking / Keynote</h4><p>Conference &amp; event speaking</p>
           </div>
           <div class="service-card" data-val="Research Consulting" onclick="toggleService(this)">
-            <h4>Research consulting</h4>
-            <p>Applied behavioral research</p>
+            <h4>Research Consulting</h4><p>Applied behavioral research</p>
+          </div>
+          <div class="service-card" data-val="OD Consulting" onclick="toggleService(this)">
+            <h4>OD Consulting</h4><p>Organisation development</p>
+          </div>
+          <div class="service-card" data-val="Training & Development" onclick="toggleService(this)">
+            <h4>Training &amp; Development</h4><p>Skill-building programs</p>
           </div>
         </div>
         <input type="hidden" name="services_offered" id="services_hidden"/>
       </div>
 
-      <div class="field-group" style="margin-top:28px">
-        <label>Engagement type <span>(select all that apply)</span></label>
+      <div class="field-group">
+        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Potential Engagement Type<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;select all that apply</span></div>
         <div class="check-grid">
           <label class="check-item"><input type="checkbox" name="engagement_type" value="Retainer"/><span class="box"></span>Monthly retainer</label>
           <label class="check-item"><input type="checkbox" name="engagement_type" value="Project"/><span class="box"></span>Project-based</label>
@@ -701,15 +779,25 @@
           <label class="check-item"><input type="checkbox" name="engagement_type" value="Speaking"/><span class="box"></span>Speaking engagements</label>
           <label class="check-item"><input type="checkbox" name="engagement_type" value="Advisory"/><span class="box"></span>Advisory / board</label>
           <label class="check-item"><input type="checkbox" name="engagement_type" value="Co-facilitation"/><span class="box"></span>Co-facilitation</label>
+          <label class="check-item"><input type="checkbox" name="engagement_type" value="Leadership Coach"/><span class="box"></span>Leadership Coach</label>
+          <label class="check-item"><input type="checkbox" name="engagement_type" value="Business Coach"/><span class="box"></span>Business Coach</label>
+          <label class="check-item"><input type="checkbox" name="engagement_type" value="HR Transformation (Long-term)"/><span class="box"></span>HR Transformation (Long-term)</label>
+          <label class="check-item"><input type="checkbox" name="engagement_type" value="HR Structure/Process Re-engineering"/><span class="box"></span>HR Structure/Process Re-engineering</label>
+          <label class="check-item" id="engage-other-item"><input type="checkbox" name="engagement_type" value="Other" id="engage-other-cb"/><span class="box"></span>Other</label>
+        </div>
+        <div id="engage-other-field" style="display:none;margin-top:6px">
+          <input type="text" name="engagement_type_other" placeholder="Please specify..." style="width:100%;padding:9px 13px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;outline:none"/>
         </div>
       </div>
 
-      <div class="field-row" style="margin-top:8px">
+      <div class="field-row">
         <div class="field-group">
-          <label>Typical engagement fee <span>(optional)</span></label>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Typical Engagement Fee<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;optional</span></div>
           <select name="fee_range">
             <option value="">Prefer not to say</option>
-            <option>Under ₹50K per day</option>
+            <option>Pro-bono</option>
+            <option>Under ₹20K per day</option>
+            <option>₹20K–₹50K per day</option>
             <option>₹50K–₹1L per day</option>
             <option>₹1L–₹3L per day</option>
             <option>₹3L+ per day</option>
@@ -717,7 +805,7 @@
           </select>
         </div>
         <div class="field-group">
-          <label>Availability <span>(next 3 months)</span></label>
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Availability<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;next 3–6 months</span></div>
           <select name="availability">
             <option value="">Select</option>
             <option>Available — actively looking</option>
@@ -729,24 +817,67 @@
       </div>
 
       <div class="field-group">
-        <label>Signature offering <span>(describe in 2–3 sentences what makes your service unique)</span></label>
+        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Signature Offering<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;what makes your service unique</span></div>
         <textarea name="signature_offering" placeholder="What is the one thing you deliver that clients remember? What outcome do they get that they couldn't get elsewhere?"></textarea>
       </div>
 
       <div class="field-group">
-        <label>Geography <span>(where do you deliver?)</span></label>
-        <div class="check-grid">
-          <label class="check-item"><input type="checkbox" name="geography" value="Pan-India"/><span class="box"></span>Pan-India</label>
-          <label class="check-item"><input type="checkbox" name="geography" value="South Asia"/><span class="box"></span>South Asia</label>
-          <label class="check-item"><input type="checkbox" name="geography" value="Southeast Asia"/><span class="box"></span>Southeast Asia</label>
-          <label class="check-item"><input type="checkbox" name="geography" value="Middle East"/><span class="box"></span>Middle East</label>
-          <label class="check-item"><input type="checkbox" name="geography" value="Global / Virtual"/><span class="box"></span>Global / Virtual</label>
+        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Current Base Location</div>
+        <div class="field-row">
+          <div class="field-group" style="margin-bottom:0">
+            <input type="text" name="base_city" placeholder="City"/>
+          </div>
+          <div class="field-group" style="margin-bottom:0">
+            <input type="text" name="base_state" placeholder="State"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Delivery Geography<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;rank your preference — select in order of priority</span></div>
+        <p style="font-size:12px;color:var(--mid);margin-bottom:8px">Click to select in order of priority — first click = Priority 1, and so on.</p>
+        <div class="check-grid" id="geo-grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:5px">
+          <div class="geo-card" data-val="Pan-India" onclick="toggleGeo(this)" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12.5px;display:flex;align-items:center;gap:8px;transition:.12s">
+            <span class="geo-rank" style="min-width:20px;height:20px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#999"></span>Pan-India
+          </div>
+          <div class="geo-card" data-val="South Asia" onclick="toggleGeo(this)" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12.5px;display:flex;align-items:center;gap:8px;transition:.12s">
+            <span class="geo-rank" style="min-width:20px;height:20px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#999"></span>South Asia
+          </div>
+          <div class="geo-card" data-val="Southeast Asia" onclick="toggleGeo(this)" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12.5px;display:flex;align-items:center;gap:8px;transition:.12s">
+            <span class="geo-rank" style="min-width:20px;height:20px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#999"></span>Southeast Asia
+          </div>
+          <div class="geo-card" data-val="Middle East" onclick="toggleGeo(this)" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12.5px;display:flex;align-items:center;gap:8px;transition:.12s">
+            <span class="geo-rank" style="min-width:20px;height:20px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#999"></span>Middle East
+          </div>
+          <div class="geo-card" data-val="Global / Virtual" onclick="toggleGeo(this)" style="padding:7px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12.5px;display:flex;align-items:center;gap:8px;transition:.12s">
+            <span class="geo-rank" style="min-width:20px;height:20px;border-radius:50%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#999"></span>Global / Virtual
+          </div>
+        </div>
+        <input type="hidden" name="geography" id="geo_hidden"/>
+
+        <!-- Pan-India sub-section: specific states -->
+        <div id="pan-india-states" style="display:none;margin-top:10px;padding:12px 14px;background:#f8f9ff;border:1px solid #dde4ff;border-radius:8px">
+          <div style="font-size:11px;font-weight:600;color:var(--blue);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Any specific states? <span style="font-weight:400;text-transform:none;color:var(--mid)">&nbsp;optional</span></div>
+          <div class="check-grid" style="grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:4px;margin-bottom:8px">
+            <label class="check-item"><input type="checkbox" name="preferred_states" value="Maharashtra"/><span class="box"></span>Maharashtra</label>
+            <label class="check-item"><input type="checkbox" name="preferred_states" value="Delhi NCR"/><span class="box"></span>Delhi NCR</label>
+            <label class="check-item"><input type="checkbox" name="preferred_states" value="Karnataka"/><span class="box"></span>Karnataka</label>
+            <label class="check-item"><input type="checkbox" name="preferred_states" value="Tamil Nadu"/><span class="box"></span>Tamil Nadu</label>
+            <label class="check-item"><input type="checkbox" name="preferred_states" value="Gujarat"/><span class="box"></span>Gujarat</label>
+            <label class="check-item"><input type="checkbox" name="preferred_states" value="Telangana"/><span class="box"></span>Telangana</label>
+            <label class="check-item"><input type="checkbox" name="preferred_states" value="West Bengal"/><span class="box"></span>West Bengal</label>
+            <label class="check-item"><input type="checkbox" name="preferred_states" value="Rajasthan"/><span class="box"></span>Rajasthan</label>
+            <label class="check-item"><input type="checkbox" name="preferred_states" value="Punjab"/><span class="box"></span>Punjab</label>
+            <label class="check-item"><input type="checkbox" name="preferred_states" value="Uttar Pradesh"/><span class="box"></span>Uttar Pradesh</label>
+            <label class="check-item"><input type="checkbox" name="preferred_states" value="All states"/><span class="box"></span>All states</label>
+          </div>
+          <input type="text" name="preferred_states_other" placeholder="Any other states or cities..." style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;outline:none"/>
         </div>
       </div>
     </div>
 
-    <!-- ─ STEP 5: Review & Submit ─ -->
-    <div class="step-pane" id="pane5">
+    <!-- ─ STEP 3: Review & Submit ─ -->
+    <div class="step-pane" id="pane3">
       <div id="review-summary" style="background:var(--fog);border-radius:10px;padding:28px;margin-bottom:28px;font-size:14px;line-height:1.8;color:var(--ink)">
         <!-- populated by JS -->
       </div>
@@ -754,7 +885,7 @@
       <div class="field-group">
         <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-weight:400">
           <input type="checkbox" name="tos_agreed" required style="margin-top:3px;accent-color:var(--blue)"/>
-          <span style="color:var(--mid)">I agree to the <a href="#" style="color:var(--blue)">Terms of Service</a> and Content License. Frameworks and interventions I contribute will be attributed to me and included in the LivedCulture Intervention Library.</span>
+          <span style="color:var(--mid)">I agree to the <a href="#" onclick="openToS();return false;" style="color:var(--blue);text-decoration:underline">Terms of Service</a> and Content License. Frameworks and interventions I contribute will be attributed to me and included in the LivedCulture Intervention Library.</span>
         </label>
       </div>
       <div class="field-group">
@@ -776,7 +907,7 @@
   <!-- Form navigation -->
   <div class="form-nav" id="formNav">
     <button class="btn-back" id="btnBack" onclick="changeStep(-1)" style="visibility:hidden">← Back</button>
-    <span class="step-counter" id="stepCounter">Step 1 of 5</span>
+    <span class="step-counter" id="stepCounter">Step 1 of 3</span>
     <button class="btn-next" id="btnNext" onclick="changeStep(1)">Continue →</button>
   </div>
 
@@ -866,13 +997,26 @@
   practitioner_type text[], competency_domains text[],
   frameworks_used text[], industries_served text[],
   contribution_interests text[], engagement_types text[],
-  geography text[], bio text, research_interests text,
+  geography text[], preferred_states text[],
+  bio text, research_interests text,
   services_offered text, fee_range text, availability text,
   signature_offering text, intro_video_url text,
   papers jsonb, videos jsonb, referral_source text,
+  base_city text, base_state text,
+  domains_other text, industries_other text,
+  engagement_type_other text, preferred_states_other text,
   is_verified boolean DEFAULT false, status text DEFAULT 'pending'
 );
 ALTER TABLE practitioners ENABLE ROW LEVEL SECURITY;
+
+-- If table already exists, run these to add missing columns:
+-- ALTER TABLE practitioners ADD COLUMN IF NOT EXISTS base_city text;
+-- ALTER TABLE practitioners ADD COLUMN IF NOT EXISTS base_state text;
+-- ALTER TABLE practitioners ADD COLUMN IF NOT EXISTS preferred_states text[];
+-- ALTER TABLE practitioners ADD COLUMN IF NOT EXISTS domains_other text;
+-- ALTER TABLE practitioners ADD COLUMN IF NOT EXISTS industries_other text;
+-- ALTER TABLE practitioners ADD COLUMN IF NOT EXISTS engagement_type_other text;
+-- ALTER TABLE practitioners ADD COLUMN IF NOT EXISTS preferred_states_other text;
 CREATE POLICY "anon_insert" ON practitioners FOR INSERT TO anon WITH CHECK (true);
 CREATE POLICY "anon_read_own" ON practitioners FOR SELECT TO anon USING (true);</pre>
     <p style="font-size:12px;color:#92400e;margin-top:8px">After running the SQL, refresh this page and try submitting again.</p>
@@ -905,7 +1049,47 @@ CREATE POLICY "anon_read_own" ON practitioners FOR SELECT TO anon USING (true);<
   </div>
 </div>
 <!-- Supabase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js">
+// Show/hide Other text inputs
+document.addEventListener('change', function(e) {
+  if (e.target && e.target.id === 'domain-other-cb') {
+    document.getElementById('domain-other-field').style.display =
+      e.target.checked ? 'block' : 'none';
+  }
+  if (e.target && e.target.id === 'ind-other-cb') {
+    document.getElementById('ind-other-field').style.display =
+      e.target.checked ? 'block' : 'none';
+  }
+  if (e.target && e.target.id === 'engage-other-cb') {
+    document.getElementById('engage-other-field').style.display =
+      e.target.checked ? 'block' : 'none';
+  }
+});
+
+
+function openToS(){
+  document.getElementById('tosModal').style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function closeToS(){
+  document.getElementById('tosModal').style.display='none';
+  document.body.style.overflow='';
+}
+function openLearnMore(){
+  document.getElementById('learnMoreModal').style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function closeLearnMore(){
+  document.getElementById('learnMoreModal').style.display='none';
+  document.body.style.overflow='';
+}
+// Close modals on backdrop click
+document.addEventListener('click',function(e){
+  if(e.target.id==='tosModal') closeToS();
+  if(e.target.id==='learnMoreModal') closeLearnMore();
+});
+
+</script>
 <script>
 const SUPA_URL='https://tjeeibfrkleytoslwnnx.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY';
@@ -1051,7 +1235,7 @@ function closeModal(){document.getElementById('profileModal').style.display='non
 
 // Multi-step form
 let currentStep=1;
-const totalSteps=5;
+const totalSteps=3;
 function changeStep(dir){
   if(dir===1&&currentStep===totalSteps){submitForm();return;}
   const next=currentStep+dir;
@@ -1064,7 +1248,7 @@ function changeStep(dir){
   tabs[next-1].classList.add('active');
   currentStep=next;
   updateNav();
-  if(currentStep===5)buildReview();
+  if(currentStep===3)buildReview();
 }
 function updateNav(){
   document.getElementById('progressFill').style.width=(currentStep/totalSteps*100)+'%';
@@ -1075,12 +1259,73 @@ function updateNav(){
 document.querySelectorAll('.step-tab').forEach((t,i)=>{
   t.addEventListener('click',()=>{const target=i+1;if(target<currentStep){while(currentStep>target)changeStep(-1);}});
 });
-document.querySelectorAll('.check-item').forEach(item=>{
-  item.addEventListener('click',()=>item.classList.toggle('selected'));
+// Event delegation for checkboxes — works on hidden steps too
+document.addEventListener('click', function(e) {
+  const item = e.target.closest('.check-item');
+  if (item) {
+    e.preventDefault();
+    item.classList.toggle('selected');
+    const checkbox = item.querySelector('input[type="checkbox"]');
+    if (checkbox) {
+      checkbox.checked = item.classList.contains('selected');
+      // Fire change event so Other fields show/hide correctly
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  }
 });
 function toggleService(card){
   card.classList.toggle('selected');
+  const chk=card.querySelector('.sc-check');
+  if(chk) chk.textContent=card.classList.contains('selected')?'✓':'';
   document.getElementById('services_hidden').value=[...document.querySelectorAll('.service-card.selected')].map(c=>c.dataset.val).join(',');
+}
+
+// Inject checkbox spans into service cards on load
+(function(){
+  document.querySelectorAll('.service-card').forEach(card=>{
+    const h4=card.querySelector('h4');
+    if(h4 && !card.querySelector('.sc-check')){
+      const chk=document.createElement('span');
+      chk.className='sc-check';
+      h4.parentNode.insertBefore(chk,h4);
+    }
+  });
+})();
+
+// ── Geography priority selector
+let geoOrder=[];
+function toggleGeo(card){
+  const val=card.dataset.val;
+  if(card.classList.contains('selected')){
+    // deselect — remove from order
+    geoOrder=geoOrder.filter(v=>v!==val);
+    card.classList.remove('selected');
+    card.style.borderColor='var(--border)';
+    card.style.background='';
+    card.querySelector('.geo-rank').textContent='';
+    card.querySelector('.geo-rank').style.background='#f0f0f0';
+    card.querySelector('.geo-rank').style.color='#999';
+  } else {
+    // select — add to order
+    geoOrder.push(val);
+    const rank=geoOrder.length;
+    card.classList.add('selected');
+    card.style.borderColor='var(--blue)';
+    card.style.background='#eef0ff';
+    card.querySelector('.geo-rank').textContent=rank;
+    card.querySelector('.geo-rank').style.background='var(--blue)';
+    card.querySelector('.geo-rank').style.color='white';
+  }
+  // Re-number all selected cards in order
+  geoOrder.forEach((v,i)=>{
+    const el=document.querySelector('.geo-card[data-val="'+v+'"]');
+    if(el) el.querySelector('.geo-rank').textContent=i+1;
+  });
+  // Save ranked string e.g. "Pan-India(1), South Asia(2)"
+  document.getElementById('geo_hidden').value=geoOrder.map((v,i)=>v+'('+(i+1)+')').join(', ');
+  // Show/hide Pan-India state selector
+  const hasPanIndia=geoOrder.includes('Pan-India');
+  document.getElementById('pan-india-states').style.display=hasPanIndia?'block':'none';
 }
 function addPaper(){
   const list=document.getElementById('papers-list');
@@ -1106,7 +1351,7 @@ function buildReview(){
   const get=k=>fd.get(k)||'—';
   const roles=[...document.querySelectorAll('#cg-role .selected input')].map(i=>i.value);
   const domains=[...document.querySelectorAll('#cg-domain .selected input')].map(i=>i.value);
-  const fw=[...document.querySelectorAll('#cg-fw .selected input')].map(i=>i.value);
+  const fw=[];
   const svcs=[...document.querySelectorAll('.service-card.selected')].map(c=>c.dataset.val);
   document.getElementById('review-summary').innerHTML=`
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
@@ -1119,7 +1364,7 @@ function buildReview(){
       <div><div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);margin-bottom:8px">Expertise</div>
         <div style="color:var(--mid);font-size:13px">${roles.join(', ')||'—'}</div>
         <div style="color:var(--mid);font-size:13px;margin-top:4px">Domains: ${domains.join(', ')||'—'}</div>
-        <div style="color:var(--mid);font-size:13px;margin-top:4px">Frameworks: ${fw.join(', ')||'—'}</div>
+        
       </div>
     </div>
     ${svcs.length?`<div style="margin-top:16px"><div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mid);margin-bottom:6px">Services</div><div style="color:var(--mid);font-size:13px">${svcs.join(' · ')}</div></div>`:''}
@@ -1127,6 +1372,42 @@ function buildReview(){
 }
 
 async function submitForm(){
+  // ── Validate required fields first ──────────────
+  const requiredFields = [
+    { name: 'full_name', label: 'Full name' },
+    { name: 'email',     label: 'Email address' },
+  ];
+  let hasError = false;
+  // Clear previous highlights
+  document.querySelectorAll('.field-error').forEach(el=>{
+    el.classList.remove('field-error');
+    const msg=el.parentNode.querySelector('.error-msg');
+    if(msg) msg.remove();
+  });
+  requiredFields.forEach(f=>{
+    const el=document.querySelector('[name="'+f.name+'"]');
+    if(el && !el.value.trim()){
+      el.classList.add('field-error');
+      el.style.borderColor='#e63946';
+      el.style.boxShadow='0 0 0 3px rgba(230,57,70,.15)';
+      const msg=document.createElement('p');
+      msg.className='error-msg';
+      msg.style.cssText='color:#e63946;font-size:12px;margin-top:4px';
+      msg.textContent=f.label+' is required';
+      el.parentNode.appendChild(msg);
+      if(!hasError){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.focus(); }
+      hasError=true;
+    }
+    if(el){
+      el.addEventListener('input',()=>{
+        el.style.borderColor='';el.style.boxShadow='';
+        const m=el.parentNode.querySelector('.error-msg');
+        if(m) m.remove();
+      },{once:true});
+    }
+  });
+  if(hasError) return;
+
   const btn=document.getElementById('btnNext');
   btn.textContent='Submitting...';btn.disabled=true;
   const form=document.getElementById('mainForm');
@@ -1150,7 +1431,12 @@ async function submitForm(){
     industries_served:[...document.querySelectorAll('#cg-ind .selected input')].map(i=>i.value),
     contribution_interests:[...document.querySelectorAll('[name="contribution"]:checked')].map(i=>i.value),
     engagement_types:[...document.querySelectorAll('[name="engagement_type"]:checked')].map(i=>i.value),
-    geography:[...document.querySelectorAll('[name="geography"]:checked')].map(i=>i.value),
+    engagement_type_other:document.querySelector('[name="engagement_type_other"]')?.value||null,
+    geography: document.getElementById('geo_hidden')?.value || null,
+    preferred_states:[...document.querySelectorAll('[name="preferred_states"]:checked')].map(i=>i.value),
+    preferred_states_other: document.querySelector('[name="preferred_states_other"]')?.value || null,
+    base_city: document.querySelector('[name="base_city"]')?.value || null,
+    base_state: document.querySelector('[name="base_state"]')?.value || null,
     bio:get('bio'),
     research_interests:get('research_interests'),
     services_offered:get('services_hidden'),
@@ -1162,7 +1448,9 @@ async function submitForm(){
     papers:[...form.querySelectorAll('[name="paper_title[]"]')].map((el,i)=>({title:el.value,url:form.querySelectorAll('[name="paper_url[]"]')[i]?.value})).filter(p=>p.title)||null,
     videos:[...form.querySelectorAll('[name="video_title[]"]')].map((el,i)=>({title:el.value,url:form.querySelectorAll('[name="video_url[]"]')[i]?.value})).filter(v=>v.title)||null,
     is_verified:false,
-    status:'pending'
+    status:'pending',
+    domains_other: document.querySelector('[name="domains_other"]')?.value || null,
+    industries_other: document.querySelector('[name="industries_other"]')?.value || null
   };
 
   // ── Step 1: Save to Supabase ──────────────────────────────
@@ -1198,6 +1486,115 @@ async function submitForm(){
   document.querySelector('.progress-bar').style.display='none';
 }
 </script>
+
+
+<!-- Terms of Service Modal -->
+<div id="tosModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:white;border-radius:16px;padding:36px;max-width:620px;width:100%;max-height:85vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
+      <h2 style="font-size:20px;font-weight:700;color:#0d1117">Terms of Service &amp; Content License</h2>
+      <button onclick="closeToS()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#9ca3af;line-height:1">×</button>
+    </div>
+    <div style="font-size:13px;color:#374151;line-height:1.8">
+      <p style="margin-bottom:12px"><strong>Last updated:</strong> June 2025</p>
+
+      <h3 style="font-size:14px;font-weight:600;color:#0d1117;margin:16px 0 8px">1. Membership</h3>
+      <p style="margin-bottom:12px">By joining the LivedCulture Practitioner Network, you confirm that the information you provide is accurate and that you are a practicing professional in the fields of coaching, facilitation, L&amp;D, OD, HR, or a related behavioral science discipline.</p>
+
+      <h3 style="font-size:14px;font-weight:600;color:#0d1117;margin:16px 0 8px">2. Content License</h3>
+      <p style="margin-bottom:12px">Any frameworks, nudge blueprints, interventions, case studies, or content you contribute to the LivedCulture platform are licensed to LivedCulture on a perpetual, non-exclusive basis. Your authorship and attribution will always be preserved. You retain ownership of your original intellectual property.</p>
+
+      <h3 style="font-size:14px;font-weight:600;color:#0d1117;margin:16px 0 8px">3. Use of Your Profile</h3>
+      <p style="margin-bottom:12px">With your consent, your professional profile (name, role, city, expertise areas) will be listed in the LivedCulture Practitioner Directory. You may request removal at any time by writing to team@lgx-livedculture.org.</p>
+
+      <h3 style="font-size:14px;font-weight:600;color:#0d1117;margin:16px 0 8px">4. Commercial Opportunities</h3>
+      <p style="margin-bottom:12px">LivedCulture may connect you with organisations seeking your expertise. Any commercial engagement that results from such a connection will be governed by a separate agreement between you and the client. LivedCulture does not take a commission unless separately agreed in writing.</p>
+
+      <h3 style="font-size:14px;font-weight:600;color:#0d1117;margin:16px 0 8px">5. Privacy</h3>
+      <p style="margin-bottom:12px">Your personal data (email, mobile) will never be sold to third parties. It will be used solely for platform communications, opportunity matching, and community updates. You may unsubscribe or request data deletion at any time.</p>
+
+      <h3 style="font-size:14px;font-weight:600;color:#0d1117;margin:16px 0 8px">6. Code of Conduct</h3>
+      <p style="margin-bottom:12px">Members are expected to engage respectfully, share knowledge in good faith, and uphold the highest professional standards. LivedCulture reserves the right to remove any member who violates these principles.</p>
+
+      <h3 style="font-size:14px;font-weight:600;color:#0d1117;margin:16px 0 8px">7. Contact</h3>
+      <p>For any questions regarding these terms, write to <a href="mailto:team@lgx-livedculture.org" style="color:#4361ee">team@lgx-livedculture.org</a></p>
+    </div>
+    <div style="margin-top:24px;text-align:right">
+      <button onclick="closeToS()" style="padding:10px 24px;background:#4361ee;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:500">I understand — close</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Learn More Modal -->
+<div id="learnMoreModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:white;border-radius:16px;padding:36px;max-width:680px;width:100%;max-height:88vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4361ee;margin-bottom:6px">About LivedCulture</div>
+        <h2 style="font-size:22px;font-weight:700;color:#0d1117;line-height:1.3">Let's bridge the gap between<br>perceived culture &amp; lived culture</h2>
+      </div>
+      <button onclick="closeLearnMore()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#9ca3af;line-height:1;margin-left:16px">×</button>
+    </div>
+
+    <div style="font-size:14px;color:#374151;line-height:1.85">
+
+      <p style="margin-bottom:16px">Most organisations invest significantly in defining their culture — values on walls, leadership frameworks, competency models. Yet the gap between what is <em>said</em> and what is <em>lived</em> remains one of the most persistent challenges in organisational life.</p>
+
+      <p style="margin-bottom:20px"><strong style="color:#0d1117">LivedCulture</strong> exists to close that gap — not through more training, but through behavioural science applied at the moment that matters.</p>
+
+      <div style="background:#f5f6fa;border-radius:10px;padding:20px 22px;margin-bottom:20px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4361ee;margin-bottom:12px">What we're building</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:12px">
+            <span style="color:#4361ee;font-weight:700;flex-shrink:0">SHIFT</span>
+            <span>A micro-intervention and nudge engine that drives real behavioural change — in under 60 seconds a day.</span>
+          </div>
+          <div style="display:flex;gap:12px">
+            <span style="color:#4361ee;font-weight:700;flex-shrink:0">MIRROR</span>
+            <span>A diagnostic platform that shows organisations the gap between their stated and lived culture.</span>
+          </div>
+          <div style="display:flex;gap:12px">
+            <span style="color:#4361ee;font-weight:700;flex-shrink:0">COACH</span>
+            <span>An AI-assisted coaching layer that personalises development for leaders at every level.</span>
+          </div>
+          <div style="display:flex;gap:12px">
+            <span style="color:#4361ee;font-weight:700;flex-shrink:0">LEAD</span>
+            <span>A progressive leadership journey built on spaced learning, peer accountability, and real-world application.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#eef0ff;border-radius:10px;padding:20px 22px;margin-bottom:20px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4361ee;margin-bottom:10px">Why a practitioner network?</div>
+        <p>The platform is being built <em>with</em> practitioners — not <em>for</em> them. We believe the most credible, battle-tested behavioural interventions come from coaches, facilitators, and L&amp;D leaders who have seen what works in the real world. By joining this network, you are not just a user — you are a co-creator of the world's most practitioner-validated behavioural change platform.</p>
+      </div>
+
+      <div style="background:#f5f6fa;border-radius:10px;padding:20px 22px;margin-bottom:20px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4361ee;margin-bottom:12px">The science foundation</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
+          <div>· Self-Determination Theory (Deci &amp; Ryan)</div>
+          <div>· Nudge Theory (Thaler &amp; Sunstein)</div>
+          <div>· Habit formation (BJ Fogg)</div>
+          <div>· Spaced repetition (Ebbinghaus)</div>
+          <div>· Psychological safety (Edmondson)</div>
+          <div>· Neuroplasticity (Lally, UCL)</div>
+        </div>
+      </div>
+
+      <div style="border-left:3px solid #4361ee;padding-left:16px;color:#4b5563;font-style:italic;margin-bottom:20px">
+        "Culture is not what you say it is. It is what people do when no one is watching — and what they do when everyone is."
+      </div>
+
+      <p>If you are a practitioner who believes that sustainable change is behavioural, not just intellectual — <strong style="color:#0d1117">this network is built for you.</strong></p>
+    </div>
+
+    <div style="margin-top:24px;display:flex;gap:10px;justify-content:flex-end">
+      <button onclick="closeLearnMore()" style="padding:10px 20px;background:none;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;cursor:pointer;color:#6b7280">Close</button>
+      <button onclick="closeLearnMore();document.getElementById('join').scrollIntoView({behavior:'smooth'});" style="padding:10px 24px;background:#4361ee;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:500">Join the Network →</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
