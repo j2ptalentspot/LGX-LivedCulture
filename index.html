@@ -954,6 +954,7 @@
         <option value="rejected">Rejected</option>
       </select>
       <button onclick="loadApplications(document.getElementById('filterSelect').value)" style="padding:8px 16px;background:#f5f6fa;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit">Refresh</button>
+      <button onclick="exportToExcel()" style="padding:8px 16px;background:#1b5e20;color:white;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:500">⬇ Export Excel</button>
     </div>
   </div>
   <!-- Stats row -->
@@ -1165,54 +1166,132 @@ async function loadApplications(filter){
 }
 
 async function approveApp(id){
-  const{error}=await db.from('practitioners').update({is_verified:true,status:'approved'}).eq('id',id);
-  if(error){alert('Error: '+error.message);return;}
+  // Use service role via direct REST for admin updates
+  const resp = await fetch(
+    'https://tjeeibfrkleytoslwnnx.supabase.co/rest/v1/practitioners?id=eq.'+id,
+    { method:'PATCH',
+      headers:{
+        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
+        'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify({is_verified:true, status:'approved'})
+    }
+  );
+  if(!resp.ok){alert('Error approving: '+await resp.text());return;}
+  alert('✓ Application approved!');
   loadApplications(document.getElementById('filterSelect').value);
 }
 
 async function rejectApp(id){
-  if(!confirm('Reject this application?'))return;
-  const{error}=await db.from('practitioners').update({status:'rejected'}).eq('id',id);
-  if(error){alert('Error: '+error.message);return;}
+  if(!confirm('Are you sure you want to reject this application?'))return;
+  const resp = await fetch(
+    'https://tjeeibfrkleytoslwnnx.supabase.co/rest/v1/practitioners?id=eq.'+id,
+    { method:'PATCH',
+      headers:{
+        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
+        'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify({status:'rejected'})
+    }
+  );
+  if(!resp.ok){alert('Error rejecting: '+await resp.text());return;}
   loadApplications(document.getElementById('filterSelect').value);
 }
 
 async function viewProfile(id){
-  const{data,error}=await db.from('practitioners').select('*').eq('id',id).single();
-  if(error||!data){alert('Could not load profile.');return;}
+  const resp = await fetch(
+    'https://tjeeibfrkleytoslwnnx.supabase.co/rest/v1/practitioners?id=eq.'+id+'&select=*',
+    { headers:{
+        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
+        'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY'
+      }
+    }
+  );
+  const arr = await resp.json();
+  const d = arr[0];
+  if(!d){alert('Could not load profile.');return;}
+
+  // Extract extra data stored in videos jsonb
+  const extra = d.videos?.find(v=>v._extra)?._extra || {};
+
+  function row(label,val){
+    if(!val||val===''||(Array.isArray(val)&&!val.length)) return '';
+    const v=Array.isArray(val)?val.join(', '):val;
+    return `<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid #f3f4f6">
+      <span style="font-size:11px;font-weight:600;color:#9ca3af;min-width:140px;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em">${label}</span>
+      <span style="font-size:13px;color:#374151;line-height:1.5">${v}</span>
+    </div>`;
+  }
+
+  const statusBg = d.is_verified?'#d1fae5':d.status==='rejected'?'#fee2e2':'#fef9c3';
+  const statusFg = d.is_verified?'#065f46':d.status==='rejected'?'#991b1b':'#92400e';
+  const statusTxt = d.is_verified?'Approved':d.status==='rejected'?'Rejected':'Pending';
+
   document.getElementById('modalBody').innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
-      <div><div style="font-size:18px;font-weight:700;color:#0d1117">${data.full_name||'—'}</div>
-      <div style="font-size:13px;color:#6b7280;margin-top:2px">${data.role||''}${data.organization?' · '+data.organization:''}</div></div>
-      <span style="padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;background:${data.is_verified?'#d1fae5':data.status==='rejected'?'#fee2e2':'#fef9c3'};color:${data.is_verified?'#065f46':data.status==='rejected'?'#991b1b':'#92400e'}">${data.is_verified?'Approved':data.status==='rejected'?'Rejected':'Pending'}</span>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-      <div style="background:#f9fafb;border-radius:8px;padding:14px">
-        <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;margin-bottom:8px">Contact</p>
-        <p style="font-size:13px;color:#4361ee">${data.email||''}</p>
-        ${data.mobile?`<p style="font-size:13px;color:#374151;margin-top:4px">${data.mobile}</p>`:''}
-        <p style="font-size:13px;color:#374151;margin-top:4px">${[data.city,data.country].filter(Boolean).join(', ')||''}</p>
-        ${data.linkedin_url?`<a href="${data.linkedin_url}" target="_blank" style="font-size:12px;color:#4361ee;display:block;margin-top:4px">LinkedIn →</a>`:''}
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px">
+      <div>
+        <div style="font-size:20px;font-weight:700;color:#0d1117">${d.full_name||'—'}</div>
+        <div style="font-size:13px;color:#6b7280;margin-top:3px">${d.role||''}${d.organization?' · '+d.organization:''}</div>
+        <div style="font-size:12px;color:#9ca3af;margin-top:2px">Applied ${new Date(d.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
       </div>
-      <div style="background:#f9fafb;border-radius:8px;padding:14px">
-        <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;margin-bottom:8px">Experience</p>
-        <p style="font-size:13px;color:#374151">${(data.practitioner_type||[]).join(', ')||'—'}</p>
-        <p style="font-size:12px;color:#6b7280;margin-top:4px">${data.years_exp?' '+data.years_exp+' yrs':''} ${data.availability||''}</p>
-      </div>
+      <span style="padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;background:${statusBg};color:${statusFg}">${statusTxt}</span>
     </div>
-    <div style="background:#f9fafb;border-radius:8px;padding:14px;margin-bottom:12px">
-      <p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;margin-bottom:8px">Expertise</p>
-      <p style="font-size:13px;color:#374151"><b>Domains:</b> ${(data.competency_domains||[]).join(', ')||'—'}</p>
-      <p style="font-size:13px;color:#374151;margin-top:4px"><b>Frameworks:</b> ${(data.frameworks_used||[]).join(', ')||'—'}</p>
-      <p style="font-size:13px;color:#374151;margin-top:4px"><b>Industries:</b> ${(data.industries_served||[]).join(', ')||'—'}</p>
+
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4361ee;margin-bottom:10px">Contact & Identity</div>
+      ${row('Email', d.email)}
+      ${row('Mobile', d.mobile)}
+      ${row('Location', [d.city,d.country].filter(Boolean).join(', '))}
+      ${row('LinkedIn', d.linkedin_url?'<a href="'+d.linkedin_url+'" target="_blank" style="color:#4361ee">View profile →</a>':'')}
+      ${row('Website', d.website_url?'<a href="'+d.website_url+'" target="_blank" style="color:#4361ee">'+d.website_url+'</a>':'')}
+      ${row('Experience', d.years_exp?d.years_exp+' years':'')}
+      ${row('Referral', d.referral_source)}
     </div>
-    ${data.bio?`<div style="background:#f9fafb;border-radius:8px;padding:14px;margin-bottom:12px"><p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;margin-bottom:6px">Bio</p><p style="font-size:13px;color:#374151;line-height:1.6">${data.bio}</p></div>`:''}
-    ${data.services_offered?`<div style="background:#f9fafb;border-radius:8px;padding:14px;margin-bottom:12px"><p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#9ca3af;margin-bottom:6px">Services</p><p style="font-size:13px;color:#374151">${data.services_offered}</p><p style="font-size:12px;color:#6b7280;margin-top:4px">${data.fee_range||''}</p></div>`:''}
-    ${data.signature_offering?`<div style="background:#eef0ff;border-radius:8px;padding:14px;margin-bottom:12px"><p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4361ee;margin-bottom:6px">Signature offering</p><p style="font-size:13px;color:#1a1a2e;line-height:1.6">${data.signature_offering}</p></div>`:''}
-    <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:16px;border-top:1px solid #e5e7eb;margin-top:8px">
-      ${!data.is_verified&&data.status!=='rejected'?`
-        <button onclick="approveApp('${data.id}');closeModal()" style="padding:9px 20px;background:#4361ee;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:500">Approve</button>
-        <button onclick="rejectApp('${data.id}');closeModal()" style="padding:9px 20px;background:none;color:#e63946;border:1px solid #e63946;border-radius:8px;font-size:14px;cursor:pointer">Reject</button>
+
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4361ee;margin-bottom:10px">Professional Expertise</div>
+      ${row('Practitioner type', d.practitioner_type)}
+      ${row('Behavioral domains', d.competency_domains)}
+      ${row('Industries served', d.industries_served)}
+      ${row('Engagement types', d.engagement_types)}
+      ${row('Geography', d.geography)}
+      ${row('Availability', d.availability)}
+      ${row('Fee range', d.fee_range)}
+    </div>
+
+    ${d.bio?`<div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4361ee;margin-bottom:8px">Bio</div>
+      <p style="font-size:13px;color:#374151;line-height:1.7">${d.bio}</p>
+    </div>`:''}
+
+    ${d.research_interests?`<div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4361ee;margin-bottom:8px">Research Interests</div>
+      <p style="font-size:13px;color:#374151;line-height:1.7">${d.research_interests}</p>
+    </div>`:''}
+
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4361ee;margin-bottom:10px">Services & Contribution</div>
+      ${row('Services offered', d.services_offered)}
+      ${row('Contribution interests', d.contribution_interests)}
+      ${row('Signature offering', d.signature_offering)}
+    </div>
+
+    ${(d.videos&&d.videos.filter(v=>!v._extra).length)||(d.papers&&d.papers.length)?`
+    <div style="border:1px solid #e5e7eb;border-radius:10px;padding:16px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4361ee;margin-bottom:10px">Research & Videos</div>
+      ${(d.papers||[]).map(p=>`<div style="font-size:13px;margin-bottom:4px">📄 ${p.title||''} ${p.url?'<a href="'+p.url+'" target="_blank" style="color:#4361ee">→</a>':''}</div>`).join('')}
+      ${(d.videos||[]).filter(v=>!v._extra).map(v=>`<div style="font-size:13px;margin-bottom:4px">🎥 ${v.title||''} ${v.url?'<a href="'+v.url+'" target="_blank" style="color:#4361ee">→</a>':''}</div>`).join('')}
+      ${d.intro_video_url?`<div style="font-size:13px;margin-top:6px">🎬 Intro video: <a href="${d.intro_video_url}" target="_blank" style="color:#4361ee">Watch →</a></div>`:''}
+    </div>`:''}
+
+    <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:16px;border-top:1px solid #e5e7eb;margin-top:8px;flex-wrap:wrap">
+      ${!d.is_verified&&d.status!=='rejected'?`
+        <button onclick="approveApp('${d.id}');closeModal()" style="padding:9px 22px;background:#4361ee;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600">✓ Approve</button>
+        <button onclick="rejectApp('${d.id}');closeModal()" style="padding:9px 22px;background:none;color:#e63946;border:1.5px solid #e63946;border-radius:8px;font-size:14px;cursor:pointer">✗ Reject</button>
       `:''}
       <button onclick="closeModal()" style="padding:9px 20px;background:none;border:1px solid #e5e7eb;border-radius:8px;font-size:14px;cursor:pointer;color:#6b7280">Close</button>
     </div>`;
@@ -1220,6 +1299,57 @@ async function viewProfile(id){
 }
 
 function closeModal(){document.getElementById('profileModal').style.display='none';}
+
+async function exportToExcel(){
+  // Fetch all practitioners
+  const resp = await fetch(
+    'https://tjeeibfrkleytoslwnnx.supabase.co/rest/v1/practitioners?select=*&order=created_at.desc',
+    { headers:{
+        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
+        'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY'
+      }
+    }
+  );
+  const data = await resp.json();
+  if(!data||!data.length){alert('No data to export.');return;}
+
+  // Build CSV
+  const headers = [
+    'Name','Email','Mobile','City','Country','LinkedIn','Website',
+    'Role','Organization','Years Experience',
+    'Practitioner Type','Behavioral Domains','Industries Served',
+    'Contribution Interests','Engagement Types','Geography',
+    'Bio','Research Interests','Services Offered',
+    'Fee Range','Availability','Signature Offering',
+    'Intro Video URL','Referral Source',
+    'Status','Is Verified','Applied Date'
+  ];
+
+  const arr2csv = v => Array.isArray(v) ? v.join(' | ') : (v||'');
+  const escape  = v => '"'+String(v||'').replace(/"/g,'""')+'"';
+
+  const rows = data.map(d=>[
+    d.full_name, d.email, d.mobile, d.city, d.country,
+    d.linkedin_url, d.website_url, d.role, d.organization, d.years_exp,
+    arr2csv(d.practitioner_type), arr2csv(d.competency_domains),
+    arr2csv(d.industries_served), arr2csv(d.contribution_interests),
+    arr2csv(d.engagement_types), arr2csv(d.geography),
+    d.bio, d.research_interests, d.services_offered,
+    d.fee_range, d.availability, d.signature_offering,
+    d.intro_video_url, d.referral_source,
+    d.status, d.is_verified?'Yes':'No',
+    new Date(d.created_at).toLocaleDateString('en-IN')
+  ].map(escape).join(','));
+
+  const csv = [headers.map(escape).join(','), ...rows].join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = 'LivedCulture-Practitioners-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 // Multi-step form
 let currentStep=1;
