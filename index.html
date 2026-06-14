@@ -1535,14 +1535,16 @@ async function submitForm(){
       body: JSON.stringify(payload)
     }
   );
-  const error = insertResp.ok ? null : { message: await insertResp.text() };
-  if(error){
+  const errorText = insertResp.ok ? null : await insertResp.text();
+  if(errorText){
     btn.textContent='Submit application →';btn.disabled=false;
-    if(error.code==='42P01'){
+    if(errorText.includes('23505') || errorText.includes('duplicate key')){
+      alert('This email address is already registered with LivedCulture.\n\nIf you need help accessing your profile, please contact:\nteam@lgx-livedculture.org');
+    } else if(errorText.includes('42P01')){
       document.getElementById('schemaNotice').style.display='block';
       alert('Database not set up yet. Please run the SQL in Supabase first.');
     } else {
-      alert('Submission error: '+error.message);
+      alert('Submission error: '+errorText);
     }
     return;
   }
