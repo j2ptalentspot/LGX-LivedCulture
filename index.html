@@ -1313,8 +1313,8 @@ function toggleGeo(card){
     const el=document.querySelector('.geo-card[data-val="'+v+'"]');
     if(el) el.querySelector('.geo-rank').textContent=i+1;
   });
-  // Save ranked string e.g. "Pan-India(1), South Asia(2)"
-  document.getElementById('geo_hidden').value=geoOrder.map((v,i)=>v+'('+(i+1)+')').join(', ');
+  // Save plain values to hidden field (backup)
+  document.getElementById('geo_hidden').value=geoOrder.join(',');
   // Show/hide Pan-India state selector
   const hasPanIndia=geoOrder.includes('Pan-India');
   document.getElementById('pan-india-states').style.display=hasPanIndia?'block':'none';
@@ -1455,6 +1455,18 @@ async function submitForm(){
     is_verified:            false,
     status:                 'pending'
   };
+
+  // ── Clean payload: ensure arrays are proper JS arrays ──────
+  // Supabase REST API handles JS arrays correctly via JSON.stringify
+  // Make sure no array field accidentally contains a string
+  const arrayFields = ['practitioner_type','competency_domains','frameworks_used',
+    'industries_served','contribution_interests','engagement_types','geography'];
+  arrayFields.forEach(f => {
+    if (payload[f] && !Array.isArray(payload[f])) {
+      payload[f] = payload[f].split(',').map(s=>s.trim()).filter(Boolean);
+    }
+    if (payload[f] && payload[f].length === 0) payload[f] = null;
+  });
 
   // ── Step 1: Save to Supabase ──────────────────────────────
   // Use direct REST API to bypass Supabase SDK schema cache
