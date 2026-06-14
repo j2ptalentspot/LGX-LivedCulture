@@ -1441,7 +1441,7 @@ async function submitForm(){
     industries_served:      [...document.querySelectorAll('#cg-ind .selected input')].map(i=>i.value),
     contribution_interests: [...document.querySelectorAll('[name="contribution"]:checked')].map(i=>i.value),
     engagement_types:       [...document.querySelectorAll('[name="engagement_type"]:checked')].map(i=>i.value),
-    geography:              document.getElementById('geo_hidden')?.value || null,
+    geography:              geoOrder.length ? geoOrder : null,
     bio:                    get('bio'),
     research_interests:     get('research_interests'),
     services_offered:       get('services_hidden'),
