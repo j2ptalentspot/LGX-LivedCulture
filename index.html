@@ -1,3 +1,4 @@
+<!-- LC-VERSION-2.1-FIXED -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -821,17 +822,7 @@
         <textarea name="signature_offering" placeholder="What is the one thing you deliver that clients remember? What outcome do they get that they couldn't get elsewhere?"></textarea>
       </div>
 
-      <div class="field-group">
-        <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Current Base Location</div>
-        <div class="field-row">
-          <div class="field-group" style="margin-bottom:0">
-            <input type="text" name="base_city" placeholder="City"/>
-          </div>
-          <div class="field-group" style="margin-bottom:0">
-            <input type="text" name="base_state" placeholder="State"/>
-          </div>
-        </div>
-      </div>
+
 
       <div class="field-group">
         <div style="font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #eef0ff">Delivery Geography<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--mid);font-size:11px">&nbsp;rank your preference — select in order of priority</span></div>
@@ -1002,7 +993,6 @@
   services_offered text, fee_range text, availability text,
   signature_offering text, intro_video_url text,
   papers jsonb, videos jsonb, referral_source text,
-  base_city text, base_state text,
   domains_other text, industries_other text,
   engagement_type_other text, preferred_states_other text,
   is_verified boolean DEFAULT false, status text DEFAULT 'pending'
@@ -1010,8 +1000,6 @@
 ALTER TABLE practitioners ENABLE ROW LEVEL SECURITY;
 
 -- If table already exists, run these to add missing columns:
--- ALTER TABLE practitioners ADD COLUMN IF NOT EXISTS base_city text;
--- ALTER TABLE practitioners ADD COLUMN IF NOT EXISTS base_state text;
 -- ALTER TABLE practitioners ADD COLUMN IF NOT EXISTS preferred_states text[];
 -- ALTER TABLE practitioners ADD COLUMN IF NOT EXISTS domains_other text;
 -- ALTER TABLE practitioners ADD COLUMN IF NOT EXISTS industries_other text;
@@ -1418,7 +1406,24 @@ async function submitForm(){
   const fd=new FormData(form);
   const get=k=>fd.get(k)||null;
 
-  // Full payload — all columns including new ones
+  // Collect extra fields (new columns) — stored in videos jsonb as metadata
+  const extraData = {
+    preferred_states:       [...document.querySelectorAll('[name="preferred_states"]:checked')].map(i=>i.value),
+    preferred_states_other: document.querySelector('[name="preferred_states_other"]')?.value || null,
+    domains_other:          document.querySelector('[name="domains_other"]')?.value || null,
+    industries_other:       document.querySelector('[name="industries_other"]')?.value || null,
+    engagement_type_other:  document.querySelector('[name="engagement_type_other"]')?.value || null,
+  };
+
+  // Collect papers and videos
+  const papersList = [...form.querySelectorAll('[name="paper_title[]"]')]
+    .map((el,i)=>({title:el.value, url:form.querySelectorAll('[name="paper_url[]"]')[i]?.value}))
+    .filter(p=>p.title);
+  const videosList = [...form.querySelectorAll('[name="video_title[]"]')]
+    .map((el,i)=>({title:el.value, url:form.querySelectorAll('[name="video_url[]"]')[i]?.value}))
+    .filter(v=>v.title);
+
+  // Core payload — ONLY original schema columns (guaranteed to work)
   const payload={
     full_name:              get('full_name'),
     email:                  get('email'),
@@ -1436,14 +1441,7 @@ async function submitForm(){
     industries_served:      [...document.querySelectorAll('#cg-ind .selected input')].map(i=>i.value),
     contribution_interests: [...document.querySelectorAll('[name="contribution"]:checked')].map(i=>i.value),
     engagement_types:       [...document.querySelectorAll('[name="engagement_type"]:checked')].map(i=>i.value),
-    engagement_type_other:  document.querySelector('[name="engagement_type_other"]')?.value || null,
     geography:              document.getElementById('geo_hidden')?.value || null,
-    preferred_states:       [...document.querySelectorAll('[name="preferred_states"]:checked')].map(i=>i.value),
-    preferred_states_other: document.querySelector('[name="preferred_states_other"]')?.value || null,
-    base_city:              document.querySelector('[name="base_city"]')?.value || null,
-    base_state:             document.querySelector('[name="base_state"]')?.value || null,
-    domains_other:          document.querySelector('[name="domains_other"]')?.value || null,
-    industries_other:       document.querySelector('[name="industries_other"]')?.value || null,
     bio:                    get('bio'),
     research_interests:     get('research_interests'),
     services_offered:       get('services_hidden'),
@@ -1452,8 +1450,8 @@ async function submitForm(){
     signature_offering:     get('signature_offering'),
     intro_video_url:        get('intro_video_url'),
     referral_source:        get('referral_source'),
-    papers:                 [...form.querySelectorAll('[name="paper_title[]"]')].map((el,i)=>({title:el.value,url:form.querySelectorAll('[name="paper_url[]"]')[i]?.value})).filter(p=>p.title)||null,
-    videos:                 [...form.querySelectorAll('[name="video_title[]"]')].map((el,i)=>({title:el.value,url:form.querySelectorAll('[name="video_url[]"]')[i]?.value})).filter(v=>v.title)||null,
+    papers:                 papersList.length ? papersList : null,
+    videos:                 videosList.length ? [...videosList, {_extra: extraData}] : [{_extra: extraData}],
     is_verified:            false,
     status:                 'pending'
   };
