@@ -437,7 +437,7 @@
 <div class="section-divider" style="margin-top:0"></div>
 
 <!-- ── JOIN FORM ── -->
-<section class="form-section" id="formSection" >
+<section class="form-section" id="formSection" ><a id="join"></a>
 
   <div class="form-header">
     <h2>Join the Practitioner Network</h2>
@@ -1132,10 +1132,16 @@ async function submitForm(){
   const form=document.getElementById('mainForm');
   const fd=new FormData(form);
   const get=k=>fd.get(k)||null;
+
   const payload={
-    full_name:get('full_name'),email:get('email'),mobile:get('mobile'),
-    city:get('city'),country:get('country'),linkedin_url:get('linkedin_url'),
-    website_url:get('website'),role:get('current_role'),
+    full_name:get('full_name'),
+    email:get('email'),
+    mobile:get('mobile'),
+    city:get('city'),
+    country:get('country'),
+    linkedin_url:get('linkedin_url'),
+    website_url:get('website'),
+    role:get('current_role'),
     organization:get('organization'),
     years_exp:get('years_exp')?parseInt(get('years_exp').split('-')[0]):null,
     practitioner_type:[...document.querySelectorAll('#cg-role .selected input')].map(i=>i.value),
@@ -1145,21 +1151,46 @@ async function submitForm(){
     contribution_interests:[...document.querySelectorAll('[name="contribution"]:checked')].map(i=>i.value),
     engagement_types:[...document.querySelectorAll('[name="engagement_type"]:checked')].map(i=>i.value),
     geography:[...document.querySelectorAll('[name="geography"]:checked')].map(i=>i.value),
-    bio:get('bio'),research_interests:get('research_interests'),
-    services_offered:get('services_hidden'),fee_range:get('fee_range'),
-    availability:get('availability'),signature_offering:get('signature_offering'),
-    intro_video_url:get('intro_video_url'),referral_source:get('referral_source'),
+    bio:get('bio'),
+    research_interests:get('research_interests'),
+    services_offered:get('services_hidden'),
+    fee_range:get('fee_range'),
+    availability:get('availability'),
+    signature_offering:get('signature_offering'),
+    intro_video_url:get('intro_video_url'),
+    referral_source:get('referral_source'),
     papers:[...form.querySelectorAll('[name="paper_title[]"]')].map((el,i)=>({title:el.value,url:form.querySelectorAll('[name="paper_url[]"]')[i]?.value})).filter(p=>p.title)||null,
     videos:[...form.querySelectorAll('[name="video_title[]"]')].map((el,i)=>({title:el.value,url:form.querySelectorAll('[name="video_url[]"]')[i]?.value})).filter(v=>v.title)||null,
-    is_verified:false,status:'pending'
+    is_verified:false,
+    status:'pending'
   };
+
+  // ── Step 1: Save to Supabase ──────────────────────────────
   const{error}=await db.from('practitioners').insert([payload]);
   if(error){
     btn.textContent='Submit application →';btn.disabled=false;
-    if(error.code==='42P01'){document.getElementById('schemaNotice').style.display='block';alert('Database not set up yet. Please scroll up to see setup instructions.');}
-    else{alert('Error: '+error.message);}
+    if(error.code==='42P01'){
+      document.getElementById('schemaNotice').style.display='block';
+      alert('Database not set up yet. Please run the SQL in Supabase first.');
+    } else {
+      alert('Submission error: '+error.message);
+    }
     return;
   }
+
+  // ── Step 2: Fire Make webhook (triggers emails via Resend) ─
+  try {
+    await fetch('https://hook.us2.make.com/jbsqvz45yvqb9u4bb0d24hwdgj5mc8f1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) {
+    // Webhook failure is non-blocking — data is already saved
+    console.warn('Webhook call failed (non-critical):', e);
+  }
+
+  // ── Step 3: Show success screen ───────────────────────────
   document.getElementById('mainForm').style.display='none';
   document.getElementById('formNav').style.display='none';
   document.getElementById('successState').classList.add('active');
