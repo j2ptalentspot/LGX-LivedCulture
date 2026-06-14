@@ -1249,6 +1249,10 @@ function changeStep(dir){
   currentStep=next;
   updateNav();
   if(currentStep===3)buildReview();
+  // Scroll to top of form on every step change
+  setTimeout(()=>{
+    document.getElementById('join').scrollIntoView({behavior:'smooth',block:'start'});
+  },50);
 }
 function updateNav(){
   document.getElementById('progressFill').style.width=(currentStep/totalSteps*100)+'%';
@@ -1414,47 +1418,62 @@ async function submitForm(){
   const fd=new FormData(form);
   const get=k=>fd.get(k)||null;
 
+  // Full payload — all columns including new ones
   const payload={
-    full_name:get('full_name'),
-    email:get('email'),
-    mobile:get('mobile'),
-    city:get('city'),
-    country:get('country'),
-    linkedin_url:get('linkedin_url'),
-    website_url:get('website'),
-    role:get('current_role'),
-    organization:get('organization'),
-    years_exp:get('years_exp')?parseInt(get('years_exp').split('-')[0]):null,
-    practitioner_type:[...document.querySelectorAll('#cg-role .selected input')].map(i=>i.value),
-    competency_domains:[...document.querySelectorAll('#cg-domain .selected input')].map(i=>i.value),
-    frameworks_used:[...document.querySelectorAll('#cg-fw .selected input')].map(i=>i.value),
-    industries_served:[...document.querySelectorAll('#cg-ind .selected input')].map(i=>i.value),
-    contribution_interests:[...document.querySelectorAll('[name="contribution"]:checked')].map(i=>i.value),
-    engagement_types:[...document.querySelectorAll('[name="engagement_type"]:checked')].map(i=>i.value),
-    engagement_type_other:document.querySelector('[name="engagement_type_other"]')?.value||null,
-    geography: document.getElementById('geo_hidden')?.value || null,
-    preferred_states:[...document.querySelectorAll('[name="preferred_states"]:checked')].map(i=>i.value),
+    full_name:              get('full_name'),
+    email:                  get('email'),
+    mobile:                 get('mobile'),
+    city:                   get('city'),
+    country:                get('country'),
+    linkedin_url:           get('linkedin_url'),
+    website_url:            get('website'),
+    role:                   get('current_role'),
+    organization:           get('organization'),
+    years_exp:              get('years_exp')?parseInt(get('years_exp').split('-')[0]):null,
+    practitioner_type:      [...document.querySelectorAll('#cg-role .selected input')].map(i=>i.value),
+    competency_domains:     [...document.querySelectorAll('#cg-domain .selected input')].map(i=>i.value),
+    frameworks_used:        [...document.querySelectorAll('#cg-fw .selected input')].map(i=>i.value),
+    industries_served:      [...document.querySelectorAll('#cg-ind .selected input')].map(i=>i.value),
+    contribution_interests: [...document.querySelectorAll('[name="contribution"]:checked')].map(i=>i.value),
+    engagement_types:       [...document.querySelectorAll('[name="engagement_type"]:checked')].map(i=>i.value),
+    engagement_type_other:  document.querySelector('[name="engagement_type_other"]')?.value || null,
+    geography:              document.getElementById('geo_hidden')?.value || null,
+    preferred_states:       [...document.querySelectorAll('[name="preferred_states"]:checked')].map(i=>i.value),
     preferred_states_other: document.querySelector('[name="preferred_states_other"]')?.value || null,
-    base_city: document.querySelector('[name="base_city"]')?.value || null,
-    base_state: document.querySelector('[name="base_state"]')?.value || null,
-    bio:get('bio'),
-    research_interests:get('research_interests'),
-    services_offered:get('services_hidden'),
-    fee_range:get('fee_range'),
-    availability:get('availability'),
-    signature_offering:get('signature_offering'),
-    intro_video_url:get('intro_video_url'),
-    referral_source:get('referral_source'),
-    papers:[...form.querySelectorAll('[name="paper_title[]"]')].map((el,i)=>({title:el.value,url:form.querySelectorAll('[name="paper_url[]"]')[i]?.value})).filter(p=>p.title)||null,
-    videos:[...form.querySelectorAll('[name="video_title[]"]')].map((el,i)=>({title:el.value,url:form.querySelectorAll('[name="video_url[]"]')[i]?.value})).filter(v=>v.title)||null,
-    is_verified:false,
-    status:'pending',
-    domains_other: document.querySelector('[name="domains_other"]')?.value || null,
-    industries_other: document.querySelector('[name="industries_other"]')?.value || null
+    base_city:              document.querySelector('[name="base_city"]')?.value || null,
+    base_state:             document.querySelector('[name="base_state"]')?.value || null,
+    domains_other:          document.querySelector('[name="domains_other"]')?.value || null,
+    industries_other:       document.querySelector('[name="industries_other"]')?.value || null,
+    bio:                    get('bio'),
+    research_interests:     get('research_interests'),
+    services_offered:       get('services_hidden'),
+    fee_range:              get('fee_range'),
+    availability:           get('availability'),
+    signature_offering:     get('signature_offering'),
+    intro_video_url:        get('intro_video_url'),
+    referral_source:        get('referral_source'),
+    papers:                 [...form.querySelectorAll('[name="paper_title[]"]')].map((el,i)=>({title:el.value,url:form.querySelectorAll('[name="paper_url[]"]')[i]?.value})).filter(p=>p.title)||null,
+    videos:                 [...form.querySelectorAll('[name="video_title[]"]')].map((el,i)=>({title:el.value,url:form.querySelectorAll('[name="video_url[]"]')[i]?.value})).filter(v=>v.title)||null,
+    is_verified:            false,
+    status:                 'pending'
   };
 
   // ── Step 1: Save to Supabase ──────────────────────────────
-  const{error}=await db.from('practitioners').insert([payload]);
+  // Use direct REST API to bypass Supabase SDK schema cache
+  const insertResp = await fetch(
+    'https://tjeeibfrkleytoslwnnx.supabase.co/rest/v1/practitioners',
+    {
+      method: 'POST',
+      headers: {
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqZWVpYmZya2xleXRvc2x3bm54Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyMzM2NTEsImV4cCI6MjA5NjgwOTY1MX0.fOg7HVs9C79ONVw4RrxewE8GfRqYxZ-pqCzn3GtpBcY',
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    }
+  );
+  const error = insertResp.ok ? null : { message: await insertResp.text() };
   if(error){
     btn.textContent='Submit application →';btn.disabled=false;
     if(error.code==='42P01'){
