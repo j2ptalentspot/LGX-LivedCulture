@@ -127,7 +127,15 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5.5vw,3.8rem);font-
 h1 em,h2 em{font-style:italic;background:linear-gradient(135deg,var(--violet),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero-mission{font-size:1.05rem;color:var(--text);max-width:700px;margin:0 auto .9rem;line-height:1.75;font-weight:400}
 .hero-sub{font-size:.9rem;color:var(--muted);max-width:640px;margin:0 auto .9rem;line-height:1.8}
-.hero-tagline{font-size:.83rem;color:var(--muted);opacity:.65;max-width:560px;margin:0 auto 2.2rem;line-height:1.7;font-style:italic;padding-top:.8rem;border-top:1px solid rgba(255,255,255,.07)}
+.hero-tagline{font-size:.83rem;color:var(--muted);opacity:.65;max-width:560px;margin:0 auto 1rem;line-height:1.7;font-style:italic}
+.hero-ecosystem.hero-magnet{font-size:1.05rem;color:#fff;font-weight:600;max-width:680px;margin:0 auto 1.4rem;line-height:1.7;letter-spacing:.01em}
+.hero-perks{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin:0 auto .7rem;padding-top:1.1rem;border-top:1px solid rgba(255,255,255,.08);max-width:600px}
+.hero-perk{display:inline-flex;align-items:center;gap:.45rem;font-size:.8rem;font-weight:600;color:var(--text);background:linear-gradient(135deg,rgba(124,111,255,.16),rgba(34,211,238,.09));border:1px solid rgba(124,111,255,.3);border-radius:999px;padding:.45rem .95rem;transition:transform .2s,border-color .2s;animation:perkGlow 3s ease-in-out infinite}
+.hero-perk:nth-child(2){animation-delay:.4s}
+.hero-perk:nth-child(3){animation-delay:.8s}
+.hero-perk:hover{transform:translateY(-2px);border-color:rgba(124,111,255,.55)}
+@keyframes perkGlow{0%,100%{box-shadow:0 0 0 rgba(124,111,255,0)}50%{box-shadow:0 0 14px rgba(124,111,255,.22)}}
+.hero-perks-note{font-size:.74rem;color:var(--muted);text-align:center;margin:0 auto 1.7rem;font-style:italic;opacity:.8}
 .hero-ctas{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.8rem}
 .btn-primary{display:inline-flex;align-items:center;gap:.5rem;font-size:.92rem;font-weight:600;background:var(--violet);color:#fff;padding:.75rem 1.6rem;border-radius:8px;text-decoration:none;border:none;cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s;box-shadow:0 4px 20px rgba(124,111,255,.32);font-family:inherit}
 .btn-primary:hover{background:var(--violet-d);transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,111,255,.42)}
@@ -652,10 +660,15 @@ body.ticker-hidden .mobile-menu{top:64px!important}
   <div class="hero-content">
     <div class="hero-badge">Open Sandbox · Co-create the Future</div>
     <h1>Where Top L&amp;D, OD &amp; Coaching Minds<br><em>Shape What's Next</em></h1>
-    <p class="hero-ecosystem">Practitioners in leadership development, cultural transformation, OD interventions, behavioral science, and workplace behavior change are already here — co-creating what comes next. <strong style="color:#fff">Are you in?</strong></p>
-    <p class="hero-mission">Welcome to an open sandbox where top L&amp;D, OD, and Coaching minds unite to co-create and align with the future. With the democratization of learning, we believe human growth shouldn't be locked away for a select few.</p>
-    <p class="hero-sub">The way learning, OD &amp; coaching is curated and delivered today will see dramatic change. Join a curated community of coaches, facilitators, OD/L&amp;D leaders and HR professionals — co-creating what's next in human growth and organisational transformation.</p>
+    <p class="hero-mission">An open sandbox where top L&amp;D, OD, and Coaching minds unite to shape what's next — a curated community of coaches, facilitators, OD/L&amp;D leaders and HR professionals building the future of human growth and organisational transformation, together. We believe growth shouldn't be locked away for a select few.</p>
     <p class="hero-tagline">Let's bridge the gap between perceived culture &amp; lived culture.</p>
+    <p class="hero-ecosystem hero-magnet">Practitioners in leadership development, cultural transformation, OD interventions, behavioral science, and workplace behavior change are already here — co-creating what comes next. <strong style="color:#22d3ee">Are you in?</strong></p>
+    <div class="hero-perks">
+      <div class="hero-perk"><span class="hero-perk-icon">🤖</span>Free AI Practitioner Toolkit</div>
+      <div class="hero-perk"><span class="hero-perk-icon">📂</span>Directory Listing</div>
+      <div class="hero-perk"><span class="hero-perk-icon">🔬</span>Monthly Nudge Labs</div>
+    </div>
+    <p class="hero-perks-note">Unlocked the moment you're approved — usually within 48 hours.</p>
     <div class="hero-ctas">
       <a href="#join" class="btn-primary">Join the Network →</a>
       <button class="btn-ghost" onclick="openAboutModal()">Learn more</button>
@@ -1075,29 +1088,33 @@ body.ticker-hidden .mobile-menu{top:64px!important}
       <!-- FORGOT PASSWORD STEP 1: Enter email -->
       <div class="reset-step" id="login-step-forgot">
         <h3>Reset your password</h3>
-        <p>Enter the email address you registered with. If your account exists, a reset code will be generated for you.</p>
+        <p>Enter the email address you registered with. We'll send a password reset link to that address.</p>
         <div class="form-group"><label>Email address</label><input type="email" id="reset-email" placeholder="jane@company.com"></div>
         <div class="section-error" id="reset-error" style="display:none">No account found with this email address.</div>
-        <button class="btn-next" onclick="requestReset()" style="width:100%;margin-top:.5rem">Generate reset code →</button>
+        <button class="btn-next" onclick="requestReset()" style="width:100%;margin-top:.5rem">Send reset link →</button>
         <button class="forgot-link" onclick="showSignInStep()">← Back to sign in</button>
       </div>
 
-      <!-- FORGOT PASSWORD STEP 2: Show code + new password -->
+      <!-- FORGOT PASSWORD STEP 1b: Link sent confirmation -->
+      <div class="reset-step" id="login-step-sent">
+        <h3>Check your email</h3>
+        <p>If an account exists for that address, a password reset link is on its way. Click the link in that email to set a new password.</p>
+        <button class="forgot-link" onclick="showSignInStep()">← Back to sign in</button>
+      </div>
+
+      <!-- FORGOT PASSWORD STEP 2: Set new password (reached via the emailed link) -->
       <div class="reset-step" id="login-step-code">
-        <h3>Your reset code</h3>
-        <p>Share this code with your network admin (<a href="mailto:team@livedculture.com" style="color:var(--violet)">team@livedculture.com</a>) to verify your identity, or if you are the admin, use the code below directly.</p>
-        <div class="reset-code-display">
-          <div class="code" id="generated-code">——</div>
-          <p>This code expires in 24 hours</p>
-        </div>
-        <p style="font-size:.8rem;color:var(--muted);margin-bottom:1rem">Already have a code from the admin? Enter it below along with your new password.</p>
-        <div class="form-group"><label>Enter reset code</label><input type="text" id="verify-code" placeholder="e.g. A3K9XZ" style="letter-spacing:.12em;font-family:monospace;text-transform:uppercase"></div>
+        <h3>Set a new password</h3>
+        <p>You've followed a valid password reset link. Choose a new password below.</p>
         <div class="form-group"><label>New password</label><div class="pwd-wrap"><input type="password" id="new-pass" placeholder="Min. 8 characters"><button type="button" class="pwd-toggle" onclick="togglePwd('new-pass',this)" title="Show/hide">👁</button></div></div>
         <div class="form-group"><label>Confirm new password</label><div class="pwd-wrap"><input type="password" id="new-pass-confirm" placeholder="Repeat password"><button type="button" class="pwd-toggle" onclick="togglePwd('new-pass-confirm',this)" title="Show/hide">👁</button></div></div>
         <div class="section-error" id="code-error" style="display:none">Invalid code or passwords do not match.</div>
         <button class="btn-next" onclick="confirmReset()" style="width:100%;margin-top:.5rem">Reset password →</button>
         <button class="forgot-link" onclick="showSignInStep()">← Back to sign in</button>
       </div>
+
+      <!-- legacy placeholder kept so any leftover references don't error -->
+      <div class="reset-step" id="login-step-legacy-placeholder" style="display:none"></div>
 
       <!-- SUCCESS STEP -->
       <div class="reset-step" id="login-step-success">
@@ -1443,7 +1460,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
       <div style="padding:1rem 1.2rem;font-size:.83rem;color:var(--muted)">No pending reset requests.</div>
     </div>
   </div>
-  <div class="admin-note"><strong>Storage:</strong> Applications are saved in browser localStorage on this device. Connect Supabase to sync across devices. Export to CSV to back up or open in Excel.</div>
+  <div class="admin-note"><strong>Storage:</strong> Applications are stored in Supabase and shared across every device and visitor. Export to CSV any time to back up or open in Excel.</div>
   <div class="admin-table-wrap">
     <div class="admin-toolbar">
       <button class="filter-btn active" onclick="filterAdmin('all',this)">All</button>
@@ -1471,7 +1488,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
     <div class="form-group"><label>Password</label><input type="password" id="admin-pass" placeholder="Your admin password" onkeydown="if(event.key==='Enter')checkAdminLogin()"></div>
     <div class="admin-login-error" id="admin-error">Incorrect credentials. Please try again.</div>
     <button class="btn-next" onclick="checkAdminLogin()" style="width:100%">Sign in →</button>
-    <p style="font-size:.72rem;color:var(--muted);margin-top:1rem;text-align:center">To change credentials, update ADMIN_EMAIL and ADMIN_PASS in the site source code.</p>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:1rem;text-align:center">Admin access is granted via the <code>admins</code> table in Supabase — sign in with any account that's been added there.</p>
   </div>
 </div>
 
@@ -1523,12 +1540,14 @@ body.ticker-hidden .mobile-menu{top:64px!important}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-// ── ADMIN CREDENTIALS ─────────────────────────────────────────────
-// Change these to your own secure credentials:
-const ADMIN_EMAIL = 'admin@livedculture.com';
-const ADMIN_PASS  = 'LivedCulture@2025';
+// ── SUPABASE CONFIG ─────────────────────────────────────────────
+// Paste your project's values from: Supabase Dashboard → Settings → API
+const SUPABASE_URL = 'https://oxmsifvhekddsygwvedw.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bXNpZnZoZWtkZHN5Z3d2ZWR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzU0NjksImV4cCI6MjA5Njk1MTQ2OX0._Q0fHbzY0t7thPptA4-e-zN5pBnNTQFphLNhGbMmirk';
 // ──────────────────────────────────────────────────────────────────
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let adminLoggedIn = false;
 let currentFilter = 'all';
@@ -1538,6 +1557,50 @@ let uploadedVids = [];
 let portalUser = null;
 let portalDocs = [];
 let portalVids = [];
+
+// In-memory caches, refreshed from Supabase. Render functions read
+// these synchronously (same shape as the old localStorage arrays);
+// mutations go to Supabase first, then refresh the relevant cache.
+let _appsCache = [];
+let _kbCache = [];
+let _forumCache = [];
+let _annCache = [];
+
+async function refreshApps(){
+  const { data, error } = await supabase.from('applications').select('*').order('created_at', { ascending:false });
+  if (error) { console.error('refreshApps', error); return; }
+  _appsCache = data || [];
+}
+async function refreshKB(){
+  const { data, error } = await supabase.from('kb_entries').select('*').order('created_at', { ascending:true });
+  if (error) { console.error('refreshKB', error); return; }
+  _kbCache = (data||[]).map(e=>({
+    id:e.id, type:e.type, title:e.title, content:e.content, source:e.source,
+    contributor:{ name:e.contributor_name, role:e.contributor_role },
+    tags:e.tags||[], timestamp:e.created_at
+  }));
+}
+async function refreshForum(){
+  const { data: posts, error: pErr } = await supabase.from('forum_posts').select('*').order('created_at', { ascending:true });
+  if (pErr) { console.error('refreshForum posts', pErr); return; }
+  const { data: answers, error: aErr } = await supabase.from('forum_answers').select('*').order('created_at', { ascending:true });
+  if (aErr) { console.error('refreshForum answers', aErr); return; }
+  _forumCache = (posts||[]).map(p=>({
+    id:p.id, title:p.title, detail:p.detail, tags:p.tags||[],
+    authorName:p.author_name, authorRole:p.author_role, timestamp:p.created_at,
+    answers:(answers||[]).filter(a=>a.post_id===p.id).map(a=>({
+      id:a.id, content:a.content, authorName:a.author_name, authorRole:a.author_role, timestamp:a.created_at
+    }))
+  }));
+}
+async function refreshAnnouncements(){
+  const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending:false });
+  if (error) { console.error('refreshAnnouncements', error); return; }
+  _annCache = (data||[]).map(a=>({ id:a.id, title:a.title, type:a.type, active:a.active, timestamp:a.created_at }));
+}
+async function refreshAllData(){
+  await Promise.all([refreshApps(), refreshKB(), refreshForum(), refreshAnnouncements()]);
+}
 
 /* ── NAV ── */
 window.addEventListener('scroll',()=>{
@@ -1730,21 +1793,38 @@ function goStep(n){
 }
 
 /* ── UTILS ── */
-function hashStr(s){let h=0;for(let c of s)h=Math.imul(31,h)+c.charCodeAt(0)|0;return h.toString(36);}
 function esc(s){return(s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function getApps(){try{return JSON.parse(localStorage.getItem('lc_applications')||'[]');}catch{return[];}}
-function saveApps(a){localStorage.setItem('lc_applications',JSON.stringify(a));}
+function getApps(){return _appsCache;}
 
 /* ── FORM SUBMIT ── */
-function submitForm(){
+async function submitForm(){
   if(!validateStep3())return;
   const pw=v('password');
-  const data={
-    id:Date.now().toString(),created_at:new Date().toISOString(),status:'pending',
-    full_name:v('full_name'),email:v('email'),role:v('role'),org:v('org'),
+  const email=v('email');
+  const btn=document.querySelector('button[onclick="submitForm()"]');
+  if(btn){btn.disabled=true;btn.textContent='Submitting…';}
+
+  // 1. Create the real account via Supabase Auth (no email confirmation
+  //    required — members can use the portal immediately).
+  const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({ email, password: pw });
+  if (signUpErr) {
+    alert('Could not create your account: '+signUpErr.message);
+    if(btn){btn.disabled=false;btn.textContent='Submit application →';}
+    return;
+  }
+  const userId = signUpData.user?.id;
+  if (!userId) {
+    alert('Account created, but no session was returned. Please try signing in.');
+    if(btn){btn.disabled=false;btn.textContent='Submit application →';}
+    return;
+  }
+
+  // 2. Insert the application row, linked to that account.
+  const row={
+    user_id:userId, status:'pending',
+    full_name:v('full_name'),email,role:v('role'),org:v('org'),
     city:v('city'),country:v('country'),linkedin:v('linkedin'),website:v('website'),
     years_exp:v('years_exp'),referral:v('referral'),
-    password_hash:hashStr(pw),
     practitioner_types:getChecked('practitioner_types'),
     domains:getChecked('domains'),industries:getChecked('industries'),
     bio:v('bio'),research_interests:v('research_interests'),
@@ -1757,31 +1837,38 @@ function submitForm(){
     signature:v('signature'),geo_priority:[...geoOrder],
     newsletter:document.getElementById('consent3').classList.contains('checked'),
   };
-  const apps=getApps();apps.push(data);saveApps(apps);
+  const { data: inserted, error: insertErr } = await supabase.from('applications').insert(row).select().single();
+  if (insertErr) {
+    alert('Account created, but saving your application failed: '+insertErr.message+'. Please contact us so we can fix this manually.');
+    if(btn){btn.disabled=false;btn.textContent='Submit application →';}
+    return;
+  }
   // Seed knowledge base from submission
-  if(data.bio) addKBEntry('framework','Practitioner: '+data.full_name,data.bio+'
-
-Expertise: '+(data.domains||[]).join(', '),'form',{name:data.full_name,role:data.role},[...(data.domains||[]).slice(0,5),...(data.practitioner_types||[]).slice(0,2)]);
+  if(inserted.bio) addKBEntry('framework','Practitioner: '+inserted.full_name,inserted.bio+'\n\nExpertise: '+(inserted.domains||[]).join(', '),'form',{name:inserted.full_name,role:inserted.role},[...(inserted.domains||[]).slice(0,5),...(inserted.practitioner_types||[]).slice(0,2)]);
+  await refreshApps();
   document.getElementById('form-container').style.display='none';
   document.getElementById('form-stepper').style.display='none';
   document.getElementById('success-view').style.display='block';
 }
 
 /* ── PRACTITIONER PORTAL ── */
-function practitionerLogin(){
+async function practitionerLogin(){
   const em=document.getElementById('portal-email').value.trim();
   const pw=document.getElementById('portal-pass').value;
-  const apps=getApps();
-  const app=apps.find(a=>a.email===em&&a.password_hash===hashStr(pw));
-  if(!app){document.getElementById('portal-error').style.display='block';return;}
-  document.getElementById('portal-error').style.display='none';
+  const errEl=document.getElementById('portal-error');
+  const { data, error } = await supabase.auth.signInWithPassword({ email:em, password:pw });
+  if (error || !data.user) { errEl.textContent='Incorrect email or password. Please try again.'; errEl.style.display='block'; return; }
+  const { data: app, error: appErr } = await supabase.from('applications').select('*').eq('user_id', data.user.id).single();
+  if (appErr || !app) { errEl.textContent='Signed in, but no application found for this account. Please contact us.'; errEl.style.display='block'; return; }
+  errEl.style.display='none';
   portalUser=app;
   document.getElementById('portal-login-form').style.display='none';
   document.getElementById('portal-dashboard').style.display='block';
   renderPortalDashboard(app);
   initCommunity();
 }
-function practitionerLogout(){
+async function practitionerLogout(){
+  await supabase.auth.signOut();
   portalUser=null;
   document.getElementById('portal-login-form').style.display='block';
   document.getElementById('portal-dashboard').style.display='none';
@@ -1810,25 +1897,26 @@ function renderPortalDashboard(app){
     dList.appendChild(d);
   });
 }
-function savePortalUpdates(){
+async function savePortalUpdates(){
   if(!portalUser)return;
-  const apps=getApps();
-  const idx=apps.findIndex(a=>a.id===portalUser.id);
-  if(idx===-1)return;
   // Merge new papers
   const newPapers=getRows('portal-papers-list').filter(Boolean);
-  apps[idx].papers=[...(apps[idx].papers||[]),...newPapers];
+  const papers=[...(portalUser.papers||[]),...newPapers];
   // Merge new videos
   const newVids=getRows('portal-videos-list').filter(Boolean);
-  apps[idx].videos=[...(apps[idx].videos||[]),...newVids];
+  const videos=[...(portalUser.videos||[]),...newVids];
   // Merge uploaded docs
   const newDocs=portalDocs.map(f=>({name:f.name,size:f.size,data:f.data}));
-  apps[idx].uploaded_docs=[...(apps[idx].uploaded_docs||[]),...newDocs];
+  const uploaded_docs=[...(portalUser.uploaded_docs||[]),...newDocs];
   // Merge uploaded vids (name only for large files)
   const newUpVids=portalVids.map(f=>({name:f.name,size:f.size}));
-  apps[idx].uploaded_vids=[...(apps[idx].uploaded_vids||[]),...newUpVids];
-  saveApps(apps);
-  portalUser=apps[idx];
+  const uploaded_vids=[...(portalUser.uploaded_vids||[]),...newUpVids];
+  const { data: updated, error } = await supabase.from('applications')
+    .update({ papers, videos, uploaded_docs, uploaded_vids })
+    .eq('id', portalUser.id).select().single();
+  if (error) { alert('Could not save updates: '+error.message); return; }
+  await refreshApps();
+  portalUser=updated;
   portalDocs=[];portalVids=[];
   const msg=document.getElementById('portal-save-msg');
   msg.style.display='flex';setTimeout(()=>msg.style.display='none',2500);
@@ -1844,20 +1932,24 @@ function showAdmin(){
   if(!adminLoggedIn){openModal('admin-login-modal');return;}
   showAdminDashboard();
 }
-function checkAdminLogin(){
+async function checkAdminLogin(){
   const e=document.getElementById('admin-email').value.trim();
   const p=document.getElementById('admin-pass').value;
   const errEl=document.getElementById('admin-error');
-  if(e===ADMIN_EMAIL&&p===ADMIN_PASS){
-    adminLoggedIn=true;
-    closeModal('admin-login-modal');
-    document.getElementById('admin-email').value='';
-    document.getElementById('admin-pass').value='';
-    errEl.style.display='none';
-    showAdminDashboard();
-  }else{
-    errEl.style.display='block';
+  const { data, error } = await supabase.auth.signInWithPassword({ email:e, password:p });
+  if (error || !data.user) { errEl.style.display='block'; return; }
+  const { data: adminRow } = await supabase.from('admins').select('user_id').eq('user_id', data.user.id).single();
+  if (!adminRow) {
+    errEl.textContent='That account exists but is not an admin.'; errEl.style.display='block';
+    await supabase.auth.signOut();
+    return;
   }
+  adminLoggedIn=true;
+  closeModal('admin-login-modal');
+  document.getElementById('admin-email').value='';
+  document.getElementById('admin-pass').value='';
+  errEl.style.display='none';
+  showAdminDashboard();
 }
 function showAdminDashboard(){
   document.getElementById('admin-view').style.display='block';
@@ -1871,7 +1963,8 @@ function hideAdmin(){
   document.getElementById('main-nav').style.display='';
   document.querySelectorAll('section,footer,.divider').forEach(e=>e.style.display='');
 }
-function loadAdmin(){
+async function loadAdmin(){
+  await refreshApps();
   const apps=getApps();
   document.getElementById('stat-total').textContent=apps.length;
   document.getElementById('stat-approved').textContent=apps.filter(a=>a.status==='approved').length;
@@ -1900,7 +1993,7 @@ function renderTable(apps,filter){
       <td><div style="font-weight:600">${esc(a.full_name)}</div><div style="font-size:.72rem;color:var(--muted)">${esc(a.email)}</div></td>
       <td style="color:var(--muted)">${esc(a.role)}</td>
       <td style="color:var(--muted)">${esc(loc)}</td>
-      <td style="color:var(--muted);font-size:.78rem">${types||'—'}</td>
+      <td style="color:var(--muted);font-size:.78rem">${esc(types)||'—'}</td>
       <td><span class="status-badge ${a.status}">${a.status}</span></td>
       <td style="color:var(--muted);font-size:.78rem">${dt}</td>
       <td><div style="display:flex;gap:.3rem">
@@ -1912,13 +2005,16 @@ function renderTable(apps,filter){
     </tr>`;
   }).join('');
 }
-function updateStatus(id,status){
-  const apps=getApps();const a=apps.find(x=>x.id===id);
-  if(a){a.status=status;saveApps(apps);loadAdmin();}
+async function updateStatus(id,status){
+  const { error } = await supabase.from('applications').update({status}).eq('id',id);
+  if (error) { alert('Could not update status: '+error.message); return; }
+  await loadAdmin();
 }
-function deleteApp(id){
+async function deleteApp(id){
   if(!confirm('Permanently delete this application?'))return;
-  saveApps(getApps().filter(a=>a.id!==id));loadAdmin();
+  const { error } = await supabase.from('applications').delete().eq('id',id);
+  if (error) { alert('Could not delete: '+error.message); return; }
+  await loadAdmin();
 }
 function viewApp(id){
   const app=getApps().find(a=>a.id===id);if(!app)return;
@@ -2044,64 +2140,41 @@ function showForgotStep() {
 function showSignInStep() {
   document.querySelectorAll('#portal-login-form .reset-step').forEach(s=>s.classList.remove('active'));
   document.getElementById('login-step-signin').classList.add('active');
+  // Restore normal page chrome in case we arrived via the focused
+  // password-recovery view (which hides nav/sections like the admin view does).
+  document.getElementById('main-nav').style.display='';
+  document.querySelectorAll('section,footer,.divider').forEach(e=>e.style.display='');
+  // Clear any recovery params from the URL so a stale link can't be replayed via back-button.
+  if (window.location.hash.includes('type=recovery')) history.replaceState(null,'',window.location.pathname+'#portal');
 }
-function generateResetCode() {
-  return Math.random().toString(36).substring(2,8).toUpperCase();
-}
-function getResetRequests() {
-  try { return JSON.parse(localStorage.getItem('lc_reset_requests')||'[]'); } catch { return []; }
-}
-function saveResetRequests(r) { localStorage.setItem('lc_reset_requests', JSON.stringify(r)); }
 
-function requestReset() {
+async function requestReset() {
   const email = document.getElementById('reset-email').value.trim();
   const errEl = document.getElementById('reset-error');
   errEl.style.display='none';
   if (!email) { errEl.textContent='Please enter your email address.'; errEl.style.display='block'; return; }
-  const apps = getApps();
-  const app = apps.find(a => a.email.toLowerCase() === email.toLowerCase());
-  if (!app) { errEl.style.display='block'; return; }
-
-  const code = generateResetCode();
-  const reqs = getResetRequests().filter(r => r.email.toLowerCase() !== email.toLowerCase()); // remove old
-  reqs.push({ email: app.email, name: app.full_name, code, requestedAt: new Date().toISOString(), used: false });
-  saveResetRequests(reqs);
-
-  document.getElementById('generated-code').textContent = code;
-  document.getElementById('verify-code').value = '';
-  document.getElementById('new-pass').value = '';
-  document.getElementById('new-pass-confirm').value = '';
-  document.getElementById('code-error').style.display='none';
-
+  const redirectTo = window.location.origin + window.location.pathname + '#portal';
+  await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+  // Always show the same "check your email" message, whether or not the
+  // address exists — this avoids leaking which emails are registered.
   document.querySelectorAll('#portal-login-form .reset-step').forEach(s=>s.classList.remove('active'));
-  document.getElementById('login-step-code').classList.add('active');
+  document.getElementById('login-step-sent').classList.add('active');
 }
 
-function confirmReset() {
-  const code = document.getElementById('verify-code').value.trim().toUpperCase();
+async function confirmReset() {
   const np = document.getElementById('new-pass').value;
   const nc = document.getElementById('new-pass-confirm').value;
   const errEl = document.getElementById('code-error');
   errEl.style.display='none';
 
-  if (!code || !np || !nc) { errEl.textContent='Please fill in all fields.'; errEl.style.display='block'; return; }
+  if (!np || !nc) { errEl.textContent='Please fill in both fields.'; errEl.style.display='block'; return; }
   if (np.length < 8) { errEl.textContent='Password must be at least 8 characters.'; errEl.style.display='block'; return; }
   if (np !== nc) { errEl.textContent='Passwords do not match.'; errEl.style.display='block'; return; }
 
-  const reqs = getResetRequests();
-  const req = reqs.find(r => r.code === code && !r.used);
-  if (!req) { errEl.textContent='Invalid or expired reset code. Please request a new one.'; errEl.style.display='block'; return; }
-
-  // Update password
-  const apps = getApps();
-  const idx = apps.findIndex(a => a.email.toLowerCase() === req.email.toLowerCase());
-  if (idx === -1) { errEl.textContent='Account not found. Please contact admin.'; errEl.style.display='block'; return; }
-  apps[idx].password_hash = hashStr(np);
-  saveApps(apps);
-
-  // Mark request as used
-  req.used = true;
-  saveResetRequests(reqs);
+  // At this point Supabase has already exchanged the emailed link for a
+  // temporary "recovery" session (handled on page load — see initAuthSession).
+  const { error } = await supabase.auth.updateUser({ password: np });
+  if (error) { errEl.textContent='Could not reset password: '+error.message+' Please request a new link.'; errEl.style.display='block'; return; }
 
   document.querySelectorAll('#portal-login-form .reset-step').forEach(s=>s.classList.remove('active'));
   document.getElementById('login-step-success').classList.add('active');
@@ -2115,32 +2188,14 @@ function toggleResetPanel() {
   if (isHidden) loadResetRequests();
 }
 function loadResetRequests() {
-  const reqs = getResetRequests().filter(r => !r.used);
+  // Password resets are now handled entirely by Supabase Auth via email —
+  // there's nothing for an admin to action here anymore.
   const list = document.getElementById('reset-requests-list');
   const badge = document.getElementById('reset-badge');
   const count = document.getElementById('reset-count');
-
-  if (badge) { badge.textContent = reqs.length; badge.style.display = reqs.length ? 'inline' : 'none'; }
-  if (count) count.textContent = reqs.length;
-
-  if (!reqs.length) {
-    list.innerHTML = '<div style="padding:1rem 1.2rem;font-size:.83rem;color:var(--muted)">No pending reset requests.</div>';
-    return;
-  }
-  list.innerHTML = reqs.map(r => {
-    const dt = new Date(r.requestedAt).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-    return `<div class="reset-row">
-      <div class="reset-row-email">${esc(r.name)}<br><span style="font-size:.75rem;color:var(--muted);font-weight:400">${esc(r.email)}</span></div>
-      <div class="reset-row-code">${esc(r.code)}</div>
-      <div class="reset-row-time">Requested ${dt}</div>
-      <button class="btn-clear-reset" onclick="markResetDone('${esc(r.code)}')">✓ Mark resolved</button>
-    </div>`;
-  }).join('');
-}
-function markResetDone(code) {
-  const reqs = getResetRequests();
-  const r = reqs.find(x => x.code === code);
-  if (r) { r.used = true; saveResetRequests(reqs); loadResetRequests(); }
+  if (badge) badge.style.display = 'none';
+  if (count) count.textContent = '0';
+  if (list) list.innerHTML = '<div style="padding:1rem 1.2rem;font-size:.83rem;color:var(--muted)">Password resets are handled automatically by email — no admin action needed here.</div>';
 }
 
 // Check reset badge when admin loads
@@ -2321,19 +2376,21 @@ function copyOutput(bodyId) {
 
 
 /* ── KNOWLEDGE BASE HELPERS ── */
-function getKB(){try{return JSON.parse(localStorage.getItem('lc_kb')||'[]');}catch{return [];}}
-function saveKB(d){localStorage.setItem('lc_kb',JSON.stringify(d));}
-function addKBEntry(type,title,content,source,contributor,tags){
-  const kb=getKB();
-  kb.push({id:Date.now().toString(),type,title,content:content.substring(0,2000),source,contributor,tags,timestamp:new Date().toISOString(),packaged:false});
-  saveKB(kb);
+function getKB(){return _kbCache;}
+async function addKBEntry(type,title,content,source,contributor,tags){
+  const { error } = await supabase.from('kb_entries').insert({
+    type, title, content: content.substring(0,2000), source,
+    contributor_name: contributor?.name || null,
+    contributor_role: contributor?.role || null,
+    tags: tags || []
+  });
+  if (error) { console.error('addKBEntry', error); return; }
+  await refreshKB();
 }
 
 /* ── FORUM HELPERS ── */
-function getForum(){try{return JSON.parse(localStorage.getItem('lc_forum')||'[]');}catch{return [];}}
-function saveForum(d){localStorage.setItem('lc_forum',JSON.stringify(d));}
-function getAnnouncements(){try{return JSON.parse(localStorage.getItem('lc_announcements')||'[]');}catch{return [];}}
-function saveAnnouncements(d){localStorage.setItem('lc_announcements',JSON.stringify(d));}
+function getForum(){return _forumCache;}
+function getAnnouncements(){return _annCache;}
 
 /* ── LIVE TICKER ── */
 let tickerItems=[], tickerIdx=0, tickerTimer=null;
@@ -2348,9 +2405,9 @@ function buildTickerItems(){
   posts.forEach(p=>{
     items.push({text:`💬 <a href="#community">${esc(p.title.substring(0,60))}${p.title.length>60?'…':''}</a>`, type:'post'});
   });
-  const apps=getApps().filter(a=>a.status==='approved');
+  const apps=_directoryCache;
   if(apps.length){
-    const latest=apps[apps.length-1];
+    const latest=apps[0];
     items.push({text:`👋 ${esc(latest.full_name.split(' ')[0])} joined as ${esc((latest.practitioner_types||['Practitioner'])[0])}`, type:'join'});
   }
   const kb=getKB();
@@ -2417,29 +2474,23 @@ function initCommunity(){
   searchDirectory();
   initTicker();
 }
-function postQuestion(){
+async function postQuestion(){
   const title=document.getElementById('q-title').value.trim();
   if(!title||!portalUser){alert('Please enter a question and sign in.');return;}
-  const posts=getForum();
-  const post={
-    id:Date.now().toString(),
-    title,
-    detail:document.getElementById('q-detail').value.trim(),
-    tags:[...selectedQTags],
-    authorName:portalUser.full_name,
-    authorRole:(portalUser.practitioner_types||[])[0]||portalUser.role,
-    authorOrg:portalUser.org||'',
-    timestamp:new Date().toISOString(),
-    answers:[]
-  };
-  posts.unshift(post);
-  saveForum(posts);
+  const detail=document.getElementById('q-detail').value.trim();
+  const authorRole=(portalUser.practitioner_types||[])[0]||portalUser.role;
+  const { error } = await supabase.from('forum_posts').insert({
+    user_id: portalUser.user_id, title, detail,
+    tags:[...selectedQTags], author_name: portalUser.full_name, author_role: authorRole
+  });
+  if (error) { alert('Could not post your question: '+error.message); return; }
   // Add to KB as discussion
-  addKBEntry('discussion',title,post.detail||title,'forum',{name:portalUser.full_name,role:post.authorRole},selectedQTags);
+  await addKBEntry('discussion',title,detail||title,'forum',{name:portalUser.full_name,role:authorRole},selectedQTags);
   document.getElementById('q-title').value='';
   document.getElementById('q-detail').value='';
   document.querySelectorAll('#q-tags .q-tag-btn').forEach(b=>b.classList.remove('sel'));
   selectedQTags=[];
+  await refreshForum();
   renderForum();
   updateForumStats();
   initTicker();
@@ -2486,20 +2537,19 @@ function togglePost(id){
   const el=document.getElementById('fexpand-'+id);
   if(el) el.classList.toggle('open');
 }
-function postAnswer(postId){
+async function postAnswer(postId){
   const content=document.getElementById('ans-'+postId)?.value.trim();
   if(!content||!portalUser){return;}
-  const posts=getForum();
-  const post=posts.find(p=>p.id===postId);
+  const post=getForum().find(p=>p.id===postId);
   if(!post) return;
-  post.answers=post.answers||[];
-  post.answers.push({
-    authorName:portalUser.full_name,
-    authorRole:(portalUser.practitioner_types||[])[0]||portalUser.role,
-    content,timestamp:new Date().toISOString()
+  const authorRole=(portalUser.practitioner_types||[])[0]||portalUser.role;
+  const { error } = await supabase.from('forum_answers').insert({
+    post_id: postId, user_id: portalUser.user_id, content,
+    author_name: portalUser.full_name, author_role: authorRole
   });
-  saveForum(posts);
-  addKBEntry('discussion',`Answer: ${post.title}`,content,'forum',{name:portalUser.full_name,role:(portalUser.practitioner_types||[])[0]||portalUser.role},post.tags||[]);
+  if (error) { alert('Could not post your answer: '+error.message); return; }
+  await addKBEntry('discussion',`Answer: ${post.title}`,content,'forum',{name:portalUser.full_name,role:authorRole},post.tags||[]);
+  await refreshForum();
   renderForum();
   updateForumStats();
   setTimeout(()=>{
@@ -2509,18 +2559,25 @@ function postAnswer(postId){
 }
 function updateForumStats(){
   const posts=getForum();
-  const apps=getApps().filter(a=>a.status==='approved');
   document.getElementById('stat-questions').textContent=posts.length;
   document.getElementById('stat-answers').textContent=posts.reduce((s,p)=>s+(p.answers||[]).length,0);
-  document.getElementById('stat-members').textContent=apps.length;
+  document.getElementById('stat-members').textContent=_directoryCache.length;
+}
+
+let _directoryCache = [];
+async function refreshDirectory(){
+  const { data, error } = await supabase.from('directory_public').select('*').order('created_at',{ascending:false});
+  if (error) { console.error('refreshDirectory', error); return; }
+  _directoryCache = data || [];
 }
 
 /* ── MEMBER DIRECTORY ── */
-function searchDirectory(){
+async function searchDirectory(){
+  await refreshDirectory();
   const q=(document.getElementById('dir-search')?.value||'').toLowerCase();
   const role=document.getElementById('dir-role-filter')?.value||'';
   const avail=document.getElementById('dir-avail-filter')?.value||'';
-  const apps=getApps().filter(a=>a.status==='approved');
+  const apps=_directoryCache;
   let results=apps.filter(a=>{
     const txt=[a.full_name,a.role,a.org,a.city,a.country,(a.practitioner_types||[]).join(' '),(a.domains||[]).join(' ')].join(' ').toLowerCase();
     const matchQ=!q||txt.includes(q);
@@ -2563,20 +2620,21 @@ function setKBFilter(f,btn){
   btn.classList.add('active');
   renderKB();
 }
-function loadKnowledgeBase(){
-  // Auto-extract from applications into KB if not already there
+async function loadKnowledgeBase(){
+  // Auto-extract from applications into KB if not already there.
+  // Dedup via a 'app:<id>' tag rather than rewriting ids (ids are
+  // server-generated UUIDs now, not something we can overwrite).
+  await refreshKB();
   const kb=getKB();
-  const existingIds=new Set(kb.map(e=>e.id));
+  const existingAppIds=new Set(kb.flatMap(e=>(e.tags||[]).filter(t=>t.startsWith('app:')).map(t=>t.slice(4))));
   const apps=getApps();
-  apps.forEach(a=>{
-    const baseId='app-'+a.id;
-    if(!existingIds.has(baseId)){
-      if(a.bio) addKBEntry('framework',`Practitioner Profile: ${a.full_name}`,`${a.bio}\n\nExpertise: ${(a.domains||[]).join(', ')}\nFrameworks: ${(a.practitioner_types||[]).join(', ')}`,'form',{name:a.full_name,role:a.role},[...(a.domains||[]).slice(0,5),...(a.practitioner_types||[]).slice(0,3)]);
-      (a.papers||[]).forEach((p,i)=>addKBEntry('micro-learning',`Research: ${p.substring(0,60)}`,p,'form',{name:a.full_name,role:a.role},(a.domains||[]).slice(0,3)));
-      (a.uploaded_docs||[]).forEach(doc=>addKBEntry('micro-coaching',`Document: ${doc.name}`,`Uploaded by ${a.full_name} (${a.role})`,'form',{name:a.full_name,role:a.role},(a.domains||[]).slice(0,3)));
-      const kbNow=getKB();kbNow[kbNow.length-1]&&(kbNow[kbNow.length-1].id=baseId);saveKB(kbNow);
-    }
-  });
+  for(const a of apps){
+    if(existingAppIds.has(a.id)) continue;
+    const marker='app:'+a.id;
+    if(a.bio) await addKBEntry('framework',`Practitioner Profile: ${a.full_name}`,`${a.bio}\n\nExpertise: ${(a.domains||[]).join(', ')}\nFrameworks: ${(a.practitioner_types||[]).join(', ')}`,'form',{name:a.full_name,role:a.role},[marker,...(a.domains||[]).slice(0,5),...(a.practitioner_types||[]).slice(0,3)]);
+    for(const p of (a.papers||[])) await addKBEntry('micro-learning',`Research: ${p.substring(0,60)}`,p,'form',{name:a.full_name,role:a.role},[marker,...(a.domains||[]).slice(0,3)]);
+    for(const doc of (a.uploaded_docs||[])) await addKBEntry('micro-coaching',`Document: ${doc.name}`,`Uploaded by ${a.full_name} (${a.role})`,'form',{name:a.full_name,role:a.role},[marker,...(a.domains||[]).slice(0,3)]);
+  }
   renderKB();
   updateKBStats();
 }
@@ -2627,8 +2685,10 @@ function togglePackage(id,btn){
   document.getElementById('kb-package-count').textContent=count?`${count} item${count>1?'s':''} selected`:'Select items to package';
   document.getElementById('btn-package').style.opacity=count?'1':'0.5';
 }
-function deleteKBEntry(id){
-  saveKB(getKB().filter(e=>e.id!==id));renderKB();updateKBStats();
+async function deleteKBEntry(id){
+  const { error } = await supabase.from('kb_entries').delete().eq('id', id);
+  if (error) { alert('Could not delete: '+error.message); return; }
+  await refreshKB(); renderKB(); updateKBStats();
 }
 function packageForClient(){
   if(!packagedIds.size){return;}
@@ -2660,13 +2720,15 @@ function exportKB(){
 }
 
 /* ── ANNOUNCEMENTS ── */
-function postAnnouncement(){
+async function postAnnouncement(){
   const title=document.getElementById('ann-title')?.value.trim();
   if(!title) return;
-  const anns=getAnnouncements();
-  anns.unshift({id:Date.now().toString(),title,type:document.getElementById('ann-type').value,timestamp:new Date().toISOString(),active:true});
-  saveAnnouncements(anns);
+  const { error } = await supabase.from('announcements').insert({
+    title, type:document.getElementById('ann-type').value, active:true
+  });
+  if (error) { alert('Could not post announcement: '+error.message); return; }
   document.getElementById('ann-title').value='';
+  await refreshAnnouncements();
   renderAnnouncements();
   initTicker();
 }
@@ -2681,16 +2743,59 @@ function renderAnnouncements(){
     <button class="kb-btn kb-btn-del" onclick="deleteAnn('${a.id}')">✕</button>
   </div>`).join('');
 }
-function toggleAnn(id){const a=getAnnouncements();const e=a.find(x=>x.id===id);if(e){e.active=!e.active;saveAnnouncements(a);renderAnnouncements();initTicker();}}
-function deleteAnn(id){saveAnnouncements(getAnnouncements().filter(a=>a.id!==id));renderAnnouncements();initTicker();}
+async function toggleAnn(id){
+  const a=getAnnouncements().find(x=>x.id===id); if(!a) return;
+  const { error } = await supabase.from('announcements').update({ active: !a.active }).eq('id', id);
+  if (error) { alert('Could not update: '+error.message); return; }
+  await refreshAnnouncements(); renderAnnouncements(); initTicker();
+}
+async function deleteAnn(id){
+  const { error } = await supabase.from('announcements').delete().eq('id', id);
+  if (error) { alert('Could not delete: '+error.message); return; }
+  await refreshAnnouncements(); renderAnnouncements(); initTicker();
+}
 
 /* ── HOOK AI OUTPUTS INTO KB ── */
 const _origCallAI = typeof callAI !== 'undefined' ? callAI : null;
 
 /* ── INIT ── */
-document.addEventListener('DOMContentLoaded',()=>{
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    // Arrived via the "reset your password" email link.
+    document.getElementById('main-nav').style.display='none';
+    document.querySelectorAll('section,footer,.divider').forEach(e=>e.style.display='none');
+    document.getElementById('portal') && (document.getElementById('portal').style.display='block');
+    window.location.hash = '#portal';
+    document.getElementById('portal-login-form').style.display='block';
+    document.getElementById('portal-dashboard').style.display='none';
+    document.querySelectorAll('#portal-login-form .reset-step').forEach(s=>s.classList.remove('active'));
+    document.getElementById('login-step-code').classList.add('active');
+  }
+});
+
+document.addEventListener('DOMContentLoaded', async ()=>{
+  await refreshAllData();
+  await refreshDirectory();
   initTicker();
   initCommunity();
+
+  // Rehydrate a returning member's session (Supabase persists it across
+  // reloads) so they land straight on their dashboard instead of the
+  // login form. Skip this entirely if we're in the middle of a password
+  // recovery flow — that's handled separately by onAuthStateChange above.
+  if (!window.location.hash.includes('type=recovery')) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      const { data: app } = await supabase.from('applications').select('*').eq('user_id', session.user.id).single();
+      if (app) {
+        portalUser = app;
+        document.getElementById('portal-login-form').style.display='none';
+        document.getElementById('portal-dashboard').style.display='block';
+        renderPortalDashboard(app);
+        initCommunity();
+      }
+    }
+  }
 });
 
 if(window.location.hash==='#admin')showAdmin();
