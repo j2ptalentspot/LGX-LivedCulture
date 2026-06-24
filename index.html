@@ -13,7 +13,7 @@
   --border:rgba(255,255,255,0.09);
   --violet:#7c6fff;--violet-d:#5a4de6;--cyan:#22d3ee;
   --text:#f0f0f8;--muted:#8888aa;--card:rgba(255,255,255,0.03);
-  --error:#f87171;--success:#34d399;
+  --error:#f87171;--success:#34d399;--warn:#fbbf24;--muted-light:#b4b4d6;
 }
 html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
@@ -428,7 +428,8 @@ tr:hover td{background:rgba(255,255,255,.018)}
 /* PASSWORD TOGGLE */
 .pwd-wrap{position:relative;display:flex;align-items:center}
 .pwd-wrap input{flex:1;padding-right:2.4rem!important}
-.pwd-toggle{position:absolute;right:.7rem;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:.2rem;line-height:1;transition:color .2s;flex-shrink:0}
+.pwd-toggle{position:absolute;right:.7rem;background:none;border:none;color:var(--muted-light);cursor:pointer;padding:.2rem;line-height:1;transition:color .2s;flex-shrink:0;display:flex;align-items:center}
+.pwd-toggle svg{width:17px;height:17px;display:block}
 .pwd-toggle:hover{color:var(--text)}
 /* On browsers that support it (Chrome/Safari/Edge/Opera), masked password
    fields are rendered as type="text" with this CSS doing the visual masking
@@ -438,6 +439,10 @@ tr:hover td{background:rgba(255,255,255,.018)}
    doesn't support this property, but Firefox also doesn't inject this
    native icon, so it just keeps using the plain type toggle as a fallback. */
 .pwd-masked{-webkit-text-security:disc}
+.pwd-strength{display:flex;align-items:center;gap:.5rem;margin-top:.4rem;font-size:.74rem;min-height:1.1rem}
+.pwd-strength-track{flex:1;height:4px;border-radius:3px;background:rgba(255,255,255,.09);overflow:hidden;max-width:140px}
+.pwd-strength-fill{height:100%;width:0%;border-radius:3px;transition:width .25s ease,background .25s ease}
+.pwd-strength-label{font-weight:600;white-space:nowrap}
 /* FEATURED VALUE CARD */
 .value-card-featured{background:linear-gradient(135deg,rgba(124,111,255,.12),rgba(34,211,238,.07));border:1px solid rgba(124,111,255,.3);border-radius:16px;padding:1.8rem;grid-column:1/-1;display:flex;align-items:center;gap:1.5rem;transition:border-color .2s,transform .2s}
 .value-card-featured:hover{border-color:rgba(124,111,255,.5);transform:translateY(-3px)}
@@ -869,8 +874,8 @@ body.ticker-hidden .mobile-menu{top:64px!important}
           <div class="form-section-title" style="margin-top:0">Create your practitioner login</div>
           <p style="font-size:.78rem;color:var(--muted);margin-bottom:1rem">Set a password to access your profile portal later and upload more content any time.</p>
           <div class="form-row">
-            <div class="form-group"><label>Password *</label><div class="pwd-wrap"><input type="password" id="password" autocomplete="off" placeholder="Min. 8 characters"><button type="button" class="pwd-toggle" onclick="togglePwd('password',this)" title="Show/hide password">👁</button></div></div>
-            <div class="form-group"><label>Confirm password *</label><div class="pwd-wrap"><input type="password" id="confirm_password" autocomplete="off" placeholder="Repeat password"><button type="button" class="pwd-toggle" onclick="togglePwd('confirm_password',this)" title="Show/hide password">👁</button></div></div>
+            <div class="form-group"><label>Password *</label><div class="pwd-wrap"><input type="password" id="password" autocomplete="off" placeholder="Min. 8 characters"><button type="button" class="pwd-toggle" onclick="togglePwd('password',this)" title="Show/hide password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div><div class="pwd-strength" id="pwd-strength-password"></div></div>
+            <div class="form-group"><label>Confirm password *</label><div class="pwd-wrap"><input type="password" id="confirm_password" autocomplete="off" placeholder="Repeat password"><button type="button" class="pwd-toggle" onclick="togglePwd('confirm_password',this)" title="Show/hide password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
           </div>
         </div>
         <div class="form-actions"><span></span><button class="btn-next" onclick="goStep(2)">Continue →</button></div>
@@ -1087,7 +1092,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
         <h3>Sign in to your profile</h3>
         <p>Use the email and password you set when you applied.</p>
         <div class="form-group"><label>Email address</label><input type="email" id="portal-email" placeholder="jane@company.com" onkeydown="if(event.key==='Enter')practitionerLogin()"></div>
-        <div class="form-group"><label>Password</label><div class="pwd-wrap"><input type="password" id="portal-pass" autocomplete="current-password" placeholder="Your password" onkeydown="if(event.key==='Enter')practitionerLogin()"><button type="button" class="pwd-toggle" onclick="togglePwd('portal-pass',this)" title="Show/hide">👁</button></div></div>
+        <div class="form-group"><label>Password</label><div class="pwd-wrap"><input type="password" id="portal-pass" autocomplete="current-password" placeholder="Your password" onkeydown="if(event.key==='Enter')practitionerLogin()"><button type="button" class="pwd-toggle" onclick="togglePwd('portal-pass',this)" title="Show/hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
         <div class="section-error" id="portal-error" style="display:none">Incorrect email or password. Please try again.</div>
         <button class="btn-next" onclick="practitionerLogin()" style="width:100%;margin-top:.5rem">Sign in →</button>
         <button class="forgot-link" onclick="showForgotStep()">Forgot your password?</button>
@@ -1114,8 +1119,8 @@ body.ticker-hidden .mobile-menu{top:64px!important}
       <div class="reset-step" id="login-step-code">
         <h3>Set a new password</h3>
         <p>You've followed a valid password reset link. Choose a new password below.</p>
-        <div class="form-group"><label>New password</label><div class="pwd-wrap"><input type="password" id="new-pass" autocomplete="off" placeholder="Min. 8 characters"><button type="button" class="pwd-toggle" onclick="togglePwd('new-pass',this)" title="Show/hide">👁</button></div></div>
-        <div class="form-group"><label>Confirm new password</label><div class="pwd-wrap"><input type="password" id="new-pass-confirm" autocomplete="off" placeholder="Repeat password"><button type="button" class="pwd-toggle" onclick="togglePwd('new-pass-confirm',this)" title="Show/hide">👁</button></div></div>
+        <div class="form-group"><label>New password</label><div class="pwd-wrap"><input type="password" id="new-pass" autocomplete="off" placeholder="Min. 8 characters"><button type="button" class="pwd-toggle" onclick="togglePwd('new-pass',this)" title="Show/hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div><div class="pwd-strength" id="pwd-strength-new-pass"></div></div>
+        <div class="form-group"><label>Confirm new password</label><div class="pwd-wrap"><input type="password" id="new-pass-confirm" autocomplete="off" placeholder="Repeat password"><button type="button" class="pwd-toggle" onclick="togglePwd('new-pass-confirm',this)" title="Show/hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
         <div class="section-error" id="code-error" style="display:none">Invalid code or passwords do not match.</div>
         <button class="btn-next" onclick="confirmReset()" style="width:100%;margin-top:.5rem">Reset password →</button>
         <button class="forgot-link" onclick="showSignInStep()">← Back to sign in</button>
@@ -2124,19 +2129,56 @@ function initPwdMasking() {
 }
 document.addEventListener('DOMContentLoaded', initPwdMasking);
 
+const ICON_EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+const ICON_EYE_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a13.2 13.2 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.5 13.5 0 0 0 1 11s4 7 11 7a9.27 9.27 0 0 0 5.39-1.61"/></svg>';
+
 function togglePwd(inputId, btn) {
   const inp = document.getElementById(inputId);
   if (!inp) return;
   if (inp.dataset.secure === '1') {
     const wasMasked = inp.classList.contains('pwd-masked');
     inp.classList.toggle('pwd-masked', !wasMasked);
-    btn.textContent = wasMasked ? '🙈' : '👁';
+    btn.innerHTML = wasMasked ? ICON_EYE_OFF : ICON_EYE;
   } else {
     const show = inp.type === 'password';
     inp.type = show ? 'text' : 'password';
-    btn.textContent = show ? '🙈' : '👁';
+    btn.innerHTML = show ? ICON_EYE_OFF : ICON_EYE;
   }
 }
+
+/* ── PASSWORD STRENGTH METER ── */
+function pwdStrength(pw) {
+  if (!pw) return { score: 0, label: '', color: '' };
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  if (score <= 1) return { score, pct: 33, label: 'Weak', color: 'var(--error)' };
+  if (score <= 3) return { score, pct: 66, label: 'Moderate', color: 'var(--warn)' };
+  return { score, pct: 100, label: 'Strong', color: 'var(--success)' };
+}
+function attachStrengthMeter(inputId) {
+  const inp = document.getElementById(inputId);
+  const meter = document.getElementById('pwd-strength-' + inputId);
+  if (!inp || !meter) return;
+  meter.innerHTML = '<div class="pwd-strength-track"><div class="pwd-strength-fill"></div></div><span class="pwd-strength-label"></span>';
+  const fill = meter.querySelector('.pwd-strength-fill');
+  const label = meter.querySelector('.pwd-strength-label');
+  inp.addEventListener('input', () => {
+    const pw = inp.value;
+    const s = pwdStrength(pw);
+    fill.style.width = (pw ? s.pct : 0) + '%';
+    fill.style.background = s.color;
+    label.textContent = pw ? s.label : '';
+    label.style.color = s.color;
+  });
+}
+document.addEventListener('DOMContentLoaded', () => {
+  attachStrengthMeter('password');
+  attachStrengthMeter('new-pass');
+});
 
 /* ── ADMIN AI SETTINGS ── */
 function toggleAISettings() {
