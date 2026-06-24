@@ -430,14 +430,14 @@ tr:hover td{background:rgba(255,255,255,.018)}
 .pwd-wrap input{flex:1;padding-right:2.4rem!important}
 .pwd-toggle{position:absolute;right:.7rem;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:.2rem;line-height:1;transition:color .2s;flex-shrink:0}
 .pwd-toggle:hover{color:var(--text)}
-/* Suppress browsers' own built-in password icons so only our custom eye toggle shows */
-input[type="password"]::-ms-reveal,
-input[type="password"]::-ms-clear{display:none}
-input[type="password"]::-webkit-credentials-auto-fill-button,
-input[type="password"]::-webkit-strong-password-auto-fill-button,
-input[type="password"]::-webkit-contacts-auto-fill-button{
-  visibility:hidden;display:none!important;pointer-events:none;position:absolute;right:0;
-}
+/* On browsers that support it (Chrome/Safari/Edge/Opera), masked password
+   fields are rendered as type="text" with this CSS doing the visual masking
+   instead. That means the browser never sees type="password" on these
+   fields at all, so it never attaches its own reveal/suggest-password icon
+   — there's nothing native to suppress or fight with CSS hacks. Firefox
+   doesn't support this property, but Firefox also doesn't inject this
+   native icon, so it just keeps using the plain type toggle as a fallback. */
+.pwd-masked{-webkit-text-security:disc}
 /* FEATURED VALUE CARD */
 .value-card-featured{background:linear-gradient(135deg,rgba(124,111,255,.12),rgba(34,211,238,.07));border:1px solid rgba(124,111,255,.3);border-radius:16px;padding:1.8rem;grid-column:1/-1;display:flex;align-items:center;gap:1.5rem;transition:border-color .2s,transform .2s}
 .value-card-featured:hover{border-color:rgba(124,111,255,.5);transform:translateY(-3px)}
@@ -869,8 +869,8 @@ body.ticker-hidden .mobile-menu{top:64px!important}
           <div class="form-section-title" style="margin-top:0">Create your practitioner login</div>
           <p style="font-size:.78rem;color:var(--muted);margin-bottom:1rem">Set a password to access your profile portal later and upload more content any time.</p>
           <div class="form-row">
-            <div class="form-group"><label>Password *</label><div class="pwd-wrap"><input type="password" id="password" autocomplete="new-password" placeholder="Min. 8 characters"><button type="button" class="pwd-toggle" onclick="togglePwd('password',this)" title="Show/hide password">👁</button></div></div>
-            <div class="form-group"><label>Confirm password *</label><div class="pwd-wrap"><input type="password" id="confirm_password" autocomplete="new-password" placeholder="Repeat password"><button type="button" class="pwd-toggle" onclick="togglePwd('confirm_password',this)" title="Show/hide password">👁</button></div></div>
+            <div class="form-group"><label>Password *</label><div class="pwd-wrap"><input type="password" id="password" autocomplete="off" placeholder="Min. 8 characters"><button type="button" class="pwd-toggle" onclick="togglePwd('password',this)" title="Show/hide password">👁</button></div></div>
+            <div class="form-group"><label>Confirm password *</label><div class="pwd-wrap"><input type="password" id="confirm_password" autocomplete="off" placeholder="Repeat password"><button type="button" class="pwd-toggle" onclick="togglePwd('confirm_password',this)" title="Show/hide password">👁</button></div></div>
           </div>
         </div>
         <div class="form-actions"><span></span><button class="btn-next" onclick="goStep(2)">Continue →</button></div>
@@ -1114,8 +1114,8 @@ body.ticker-hidden .mobile-menu{top:64px!important}
       <div class="reset-step" id="login-step-code">
         <h3>Set a new password</h3>
         <p>You've followed a valid password reset link. Choose a new password below.</p>
-        <div class="form-group"><label>New password</label><div class="pwd-wrap"><input type="password" id="new-pass" autocomplete="new-password" placeholder="Min. 8 characters"><button type="button" class="pwd-toggle" onclick="togglePwd('new-pass',this)" title="Show/hide">👁</button></div></div>
-        <div class="form-group"><label>Confirm new password</label><div class="pwd-wrap"><input type="password" id="new-pass-confirm" autocomplete="new-password" placeholder="Repeat password"><button type="button" class="pwd-toggle" onclick="togglePwd('new-pass-confirm',this)" title="Show/hide">👁</button></div></div>
+        <div class="form-group"><label>New password</label><div class="pwd-wrap"><input type="password" id="new-pass" autocomplete="off" placeholder="Min. 8 characters"><button type="button" class="pwd-toggle" onclick="togglePwd('new-pass',this)" title="Show/hide">👁</button></div></div>
+        <div class="form-group"><label>Confirm new password</label><div class="pwd-wrap"><input type="password" id="new-pass-confirm" autocomplete="off" placeholder="Repeat password"><button type="button" class="pwd-toggle" onclick="togglePwd('new-pass-confirm',this)" title="Show/hide">👁</button></div></div>
         <div class="section-error" id="code-error" style="display:none">Invalid code or passwords do not match.</div>
         <button class="btn-next" onclick="confirmReset()" style="width:100%;margin-top:.5rem">Reset password →</button>
         <button class="forgot-link" onclick="showSignInStep()">← Back to sign in</button>
@@ -2102,12 +2102,40 @@ document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click
 
 
 /* ── PASSWORD TOGGLE ── */
+// Feature-detect support for -webkit-text-security (Chrome/Safari/Edge/Opera
+// support it; Firefox does not). This lets us pick the right masking
+// strategy per-browser instead of guessing at browser-specific icon hacks.
+const SUPPORTS_TEXT_SECURITY = (() => {
+  try {
+    const test = document.createElement('input');
+    test.style.webkitTextSecurity = 'disc';
+    return test.style.webkitTextSecurity === 'disc';
+  } catch (e) { return false; }
+})();
+
+function initPwdMasking() {
+  if (!SUPPORTS_TEXT_SECURITY) return; // Firefox etc. — plain type toggle works fine, no native icon issue there
+  document.querySelectorAll('.pwd-wrap input[type="password"]').forEach(inp => {
+    inp.type = 'text';
+    inp.dataset.secure = '1';
+    inp.classList.add('pwd-masked');
+    inp.setAttribute('autocomplete', 'off');
+  });
+}
+document.addEventListener('DOMContentLoaded', initPwdMasking);
+
 function togglePwd(inputId, btn) {
   const inp = document.getElementById(inputId);
   if (!inp) return;
-  const show = inp.type === 'password';
-  inp.type = show ? 'text' : 'password';
-  btn.textContent = show ? '🙈' : '👁';
+  if (inp.dataset.secure === '1') {
+    const wasMasked = inp.classList.contains('pwd-masked');
+    inp.classList.toggle('pwd-masked', !wasMasked);
+    btn.textContent = wasMasked ? '🙈' : '👁';
+  } else {
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.textContent = show ? '🙈' : '👁';
+  }
 }
 
 /* ── ADMIN AI SETTINGS ── */
