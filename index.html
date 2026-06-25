@@ -1554,7 +1554,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
 const SUPABASE_URL = 'https://oxmsifvhekddsygwvedw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bXNpZnZoZWtkZHN5Z3d2ZWR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzU0NjksImV4cCI6MjA5Njk1MTQ2OX0._Q0fHbzY0t7thPptA4-e-zN5pBnNTQFphLNhGbMmirk';
 // ──────────────────────────────────────────────────────────────────
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let adminLoggedIn = false;
 let currentFilter = 'all';
