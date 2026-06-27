@@ -211,7 +211,7 @@ h2{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,4vw,2.7rem);font-
 .step-dot.done{border-color:var(--violet);color:var(--violet)}
 .step-label{font-size:.68rem;color:var(--muted);letter-spacing:.04em}
 .step-label.active{color:var(--violet)}
-.step-conn{width:70px;height:1px;background:var(--border);margin:0 .4rem .9rem}
+.step-conn{width:52px;height:1px;background:var(--border);margin:0 .4rem .9rem}
 .form-card{max-width:720px;margin:0 auto;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:2.2rem}
 .form-step{display:none}
 .form-step.active{display:block}
@@ -590,6 +590,24 @@ body.ticker-hidden .mobile-menu{top:64px!important}
   .kb-stats{grid-template-columns:repeat(3,1fr)}
   .dir-grid{grid-template-columns:1fr}
 }
+
+/* ── LANGUAGE / CREDENTIALS CHECKBOX GRID ── */
+.check-grid-sm{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:.4rem;margin-top:.4rem}
+.check-grid-sm .check-item{font-size:.77rem;padding:.38rem .6rem}
+/* ── AI READINESS RADIO ── */
+.radio-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.4rem}
+.radio-item{display:flex;align-items:center;gap:.4rem;font-size:.83rem;color:var(--muted);padding:.45rem .85rem;border:1px solid var(--border);border-radius:7px;cursor:pointer;user-select:none;transition:border-color .15s,background .15s,color .15s}
+.radio-item:hover{border-color:rgba(124,111,255,.3);color:var(--text)}
+.radio-item.selected{border-color:rgba(124,111,255,.55);background:rgba(124,111,255,.1);color:var(--text)}
+.radio-item input[type=radio]{accent-color:var(--violet);width:14px;height:14px}
+/* ── TOGGLE CHECKBOX (Yes/No) ── */
+.yn-row{display:flex;gap:.6rem;margin-top:.4rem}
+.yn-btn{font-size:.82rem;padding:.42rem 1.1rem;border:1px solid var(--border);border-radius:7px;cursor:pointer;color:var(--muted);background:none;font-family:inherit;transition:all .2s}
+.yn-btn.sel-yes{border-color:var(--success);background:rgba(52,211,153,.1);color:var(--success)}
+.yn-btn.sel-no{border-color:var(--error);background:rgba(248,113,113,.08);color:var(--error)}
+/* ── STEP 2 SECTION BOX ── */
+.cred-box{background:rgba(124,111,255,.04);border:1px solid rgba(124,111,255,.15);border-radius:12px;padding:1rem 1.1rem;margin-bottom:.9rem}
+.cred-box .form-section-title{margin-top:0}
 </style>
 </head>
 <body>
@@ -834,13 +852,15 @@ body.ticker-hidden .mobile-menu{top:64px!important}
     <div class="form-stepper" id="form-stepper">
       <div class="step-item"><div class="step-dot active" id="dot-1">1</div><div class="step-label active" id="lbl-1">Who you are</div></div>
       <div class="step-conn"></div>
-      <div class="step-item"><div class="step-dot" id="dot-2">2</div><div class="step-label" id="lbl-2">Your expertise</div></div>
+      <div class="step-item"><div class="step-dot" id="dot-2">2</div><div class="step-label" id="lbl-2">Credentials</div></div>
       <div class="step-conn"></div>
-      <div class="step-item"><div class="step-dot" id="dot-3">3</div><div class="step-label" id="lbl-3">Services &amp; submit</div></div>
+      <div class="step-item"><div class="step-dot" id="dot-3">3</div><div class="step-label" id="lbl-3">Expertise</div></div>
+      <div class="step-conn"></div>
+      <div class="step-item"><div class="step-dot" id="dot-4">4</div><div class="step-label" id="lbl-4">Services</div></div>
     </div>
     <div class="form-card" id="form-container">
 
-      <!-- STEP 1 -->
+      <!-- STEP 1: WHO YOU ARE -->
       <div class="form-step active" id="step-1">
         <h3>Tell us about yourself</h3>
         <p class="step-desc">Fields marked * are required.</p>
@@ -854,16 +874,43 @@ body.ticker-hidden .mobile-menu{top:64px!important}
         </div>
         <div class="form-row">
           <div class="form-group"><label>City</label><input type="text" id="city" placeholder="Mumbai"></div>
-          <div class="form-group"><label>Country</label><select id="country"><option value="">Select country</option><option>India</option><option>Singapore</option><option>UAE</option><option>United Kingdom</option><option>United States</option><option>Australia</option><option>Other</option></select></div>
+          <div class="form-group"><label>Country *</label><select id="country"><option value="">Select country</option><option>India</option><option>Singapore</option><option>UAE</option><option>United Kingdom</option><option>United States</option><option>Australia</option><option>Malaysia</option><option>Indonesia</option><option>Saudi Arabia</option><option>Qatar</option><option>Other</option></select></div>
         </div>
         <div class="form-row">
           <div class="form-group"><label>LinkedIn profile</label><input type="url" id="linkedin" placeholder="https://linkedin.com/in/yourname"></div>
-          <div class="form-group"><label>Website</label><input type="url" id="website" placeholder="https://yoursite.com"></div>
+          <div class="form-group"><label>Website / portfolio</label><input type="url" id="website" placeholder="https://yoursite.com"></div>
         </div>
         <div class="form-row">
+          <div class="form-group"><label>Profile photo URL <span style="font-size:.72rem;color:var(--muted)">(LinkedIn or personal site)</span></label><input type="url" id="photo_url" placeholder="https://linkedin.com/photo/..."></div>
           <div class="form-group"><label>Years of experience</label><select id="years_exp"><option value="">Select</option><option>0-3 years</option><option>4-8 years</option><option>9-15 years</option><option>15+ years</option></select></div>
+        </div>
+
+        <div class="form-section-title">Languages you coach / facilitate in *</div>
+        <div class="checkbox-grid check-grid-sm" id="languages">
+          <div class="check-item" onclick="toggleCheck(this)" data-val="English"><div class="cb-box"></div>English</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Hindi"><div class="cb-box"></div>Hindi</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Tamil"><div class="cb-box"></div>Tamil</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Bengali"><div class="cb-box"></div>Bengali</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Telugu"><div class="cb-box"></div>Telugu</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Marathi"><div class="cb-box"></div>Marathi</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Kannada"><div class="cb-box"></div>Kannada</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Gujarati"><div class="cb-box"></div>Gujarati</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Malayalam"><div class="cb-box"></div>Malayalam</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Punjabi"><div class="cb-box"></div>Punjabi</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Arabic"><div class="cb-box"></div>Arabic</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Bahasa Malaysia"><div class="cb-box"></div>Bahasa Malaysia</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Bahasa Indonesia"><div class="cb-box"></div>Bahasa Indonesia</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Other" data-other="other-lang"><div class="cb-box"></div>Other</div>
+        </div>
+        <div class="other-specify-wrap" id="other-lang" style="display:none">
+          <label>Please specify</label><input type="text" placeholder="e.g. French, Mandarin...">
+        </div>
+        <div class="section-error" id="err_languages">Please select at least one language.</div>
+
+        <div class="form-row" style="margin-top:.9rem">
           <div class="form-group"><label>How did you hear about us?</label><select id="referral"><option value="">Select</option><option>LinkedIn</option><option>Colleague referral</option><option>Google search</option><option>Webinar or event</option><option>Other</option></select></div>
         </div>
+
         <div style="background:rgba(124,111,255,.06);border:1px solid rgba(124,111,255,.18);border-radius:12px;padding:1.1rem 1.2rem;margin-top:.5rem">
           <div class="form-section-title" style="margin-top:0">Create your practitioner login</div>
           <p style="font-size:.78rem;color:var(--muted);margin-bottom:1rem">Set a password to access your profile portal later and upload more content any time.</p>
@@ -875,8 +922,102 @@ body.ticker-hidden .mobile-menu{top:64px!important}
         <div class="form-actions"><span></span><button class="btn-next" onclick="goStep(2)">Continue →</button></div>
       </div>
 
-      <!-- STEP 2 -->
+      <!-- STEP 2: CREDENTIALS & TOOLS -->
       <div class="form-step" id="step-2">
+        <h3>Credentials &amp; tools</h3>
+        <p class="step-desc">Help enterprises find the right match. Select all that apply.</p>
+
+        <div class="cred-box">
+          <div class="form-section-title">ICF / Coaching membership level</div>
+          <div class="radio-row" id="icf_level">
+            <label class="radio-item"><input type="radio" name="icf_level" value="Non-member"> Non-member</label>
+            <label class="radio-item"><input type="radio" name="icf_level" value="ICF ACC"> ICF ACC</label>
+            <label class="radio-item"><input type="radio" name="icf_level" value="ICF PCC"> ICF PCC</label>
+            <label class="radio-item"><input type="radio" name="icf_level" value="ICF MCC"> ICF MCC</label>
+            <label class="radio-item"><input type="radio" name="icf_level" value="EMCC Member"> EMCC Member</label>
+            <label class="radio-item"><input type="radio" name="icf_level" value="EMCC Senior"> EMCC Senior Practitioner</label>
+          </div>
+        </div>
+
+        <div class="cred-box">
+          <div class="form-section-title">Other professional body memberships</div>
+          <div class="checkbox-grid check-grid-sm" id="professional_bodies">
+            <div class="check-item" onclick="toggleCheck(this)" data-val="CIPD"><div class="cb-box"></div>CIPD</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="SHRM"><div class="cb-box"></div>SHRM</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="HCI India"><div class="cb-box"></div>HCI India</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="BPS"><div class="cb-box"></div>BPS (British Psych)</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="NASSCOM"><div class="cb-box"></div>NASSCOM</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="ICF India"><div class="cb-box"></div>ICF India Chapter</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="NHRDNetwork"><div class="cb-box"></div>NHRD Network</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Other" data-other="other-bodies"><div class="cb-box"></div>Other</div>
+          </div>
+          <div class="other-specify-wrap" id="other-bodies" style="display:none">
+            <label>Please specify</label><input type="text" placeholder="e.g. APS, SIOP...">
+          </div>
+        </div>
+
+        <div class="cred-box">
+          <div class="form-section-title">Coaching frameworks you are trained / certified in</div>
+          <div class="checkbox-grid check-grid-sm" id="coaching_frameworks">
+            <div class="check-item" onclick="toggleCheck(this)" data-val="GROW"><div class="cb-box"></div>GROW</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Solution-Focused"><div class="cb-box"></div>Solution-Focused</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Co-Active / CTI"><div class="cb-box"></div>Co-Active / CTI</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Ontological"><div class="cb-box"></div>Ontological</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Narrative"><div class="cb-box"></div>Narrative</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Clean Language"><div class="cb-box"></div>Clean Language</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Positive Psychology / PERMA"><div class="cb-box"></div>Positive Psychology</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="NLP"><div class="cb-box"></div>NLP</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Transactional Analysis"><div class="cb-box"></div>Transactional Analysis</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Gestalt"><div class="cb-box"></div>Gestalt</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Appreciative Inquiry"><div class="cb-box"></div>Appreciative Inquiry</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Other" data-other="other-frameworks"><div class="cb-box"></div>Other</div>
+          </div>
+          <div class="other-specify-wrap" id="other-frameworks" style="display:none">
+            <label>Please specify</label><input type="text" placeholder="e.g. Internal Family Systems...">
+          </div>
+        </div>
+
+        <div class="cred-box">
+          <div class="form-section-title">Psychometric tools you are certified to administer</div>
+          <div class="checkbox-grid check-grid-sm" id="psychometric_tools">
+            <div class="check-item" onclick="toggleCheck(this)" data-val="DISC / DiSC"><div class="cb-box"></div>DISC / DiSC</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Hogan HPI/HDS/MVPI"><div class="cb-box"></div>Hogan (HPI/HDS/MVPI)</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="MBTI / MBTIi"><div class="cb-box"></div>MBTI / MBTIi</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="EQ-i 2.0 / EQ 360"><div class="cb-box"></div>EQ-i 2.0 / EQ 360</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="CliftonStrengths"><div class="cb-box"></div>CliftonStrengths</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="FIRO-B"><div class="cb-box"></div>FIRO-B</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="TKI (Thomas-Kilmann)"><div class="cb-box"></div>TKI (Thomas-Kilmann)</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Belbin Team Roles"><div class="cb-box"></div>Belbin Team Roles</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="LSI / OCI"><div class="cb-box"></div>LSI / OCI</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="SDI (Core Strengths)"><div class="cb-box"></div>SDI (Core Strengths)</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="16PF"><div class="cb-box"></div>16PF</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="HBDI"><div class="cb-box"></div>HBDI</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Genos EI"><div class="cb-box"></div>Genos EI</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="VIA Strengths"><div class="cb-box"></div>VIA Strengths</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Other" data-other="other-psycho"><div class="cb-box"></div>Other</div>
+          </div>
+          <div class="other-specify-wrap" id="other-psycho" style="display:none">
+            <label>Please specify</label><input type="text" placeholder="e.g. Strengthscope, Enneagram...">
+          </div>
+        </div>
+
+        <div class="cred-box">
+          <div class="form-section-title">Leadership levels you specialise in *</div>
+          <div class="checkbox-grid check-grid-sm" id="leadership_levels">
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Individual Contributors"><div class="cb-box"></div>Individual Contributors</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Team Leads / Managers"><div class="cb-box"></div>Team Leads / Managers</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Senior Managers / Directors"><div class="cb-box"></div>Sr. Managers / Directors</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="VPs / Business Heads"><div class="cb-box"></div>VPs / Business Heads</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="C-Suite / Board"><div class="cb-box"></div>C-Suite / Board</div>
+          </div>
+          <div class="section-error" id="err_levels">Please select at least one leadership level.</div>
+        </div>
+
+        <div class="form-actions"><button class="btn-back" onclick="goStep(1)">← Back</button><button class="btn-next" onclick="goStep(3)">Continue →</button></div>
+      </div>
+
+      <!-- STEP 3: YOUR EXPERTISE -->
+      <div class="form-step" id="step-3">
         <h3>Your expertise</h3>
         <p class="step-desc">Select all that apply. Fields marked * are required.</p>
 
@@ -911,7 +1052,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
           <div class="check-item" onclick="toggleCheck(this)" data-val="Crucial Conversations"><div class="cb-box"></div>Crucial Conversations</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Strategic Thinking"><div class="cb-box"></div>Strategic Thinking</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="EQ"><div class="cb-box"></div>Emotional Quotient (EQ)</div>
-          <div class="check-item" onclick="toggleCheck(this)" data-val="D&I"><div class="cb-box"></div>Diversity &amp; Inclusion</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Diversity & Inclusion"><div class="cb-box"></div>Diversity &amp; Inclusion</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Communication"><div class="cb-box"></div>Communication</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Executive Presence"><div class="cb-box"></div>Executive Presence</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="POSH"><div class="cb-box"></div>POSH</div>
@@ -920,62 +1061,92 @@ body.ticker-hidden .mobile-menu{top:64px!important}
           <div class="check-item" onclick="toggleCheck(this)" data-val="Other" data-other="other-domains"><div class="cb-box"></div>Other (please specify)</div>
         </div>
         <div class="other-specify-wrap" id="other-domains" style="display:none">
-          <label>Please describe the domain</label>
-          <input type="text" placeholder="e.g., Wellbeing, Resilience, Neurodiversity...">
+          <label>Please describe the domain</label><input type="text" placeholder="e.g. Wellbeing, Resilience...">
         </div>
 
         <div class="form-section-title">Industries served</div>
         <div class="checkbox-grid" id="industries">
           <div class="check-item" onclick="toggleCheck(this)" data-val="Manufacturing"><div class="cb-box"></div>Manufacturing</div>
-          <div class="check-item" onclick="toggleCheck(this)" data-val="IT/Technology"><div class="cb-box"></div>IT / Technology</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="IT / Technology"><div class="cb-box"></div>IT / Technology</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="BFSI"><div class="cb-box"></div>BFSI</div>
-          <div class="check-item" onclick="toggleCheck(this)" data-val="Pharma/Healthcare"><div class="cb-box"></div>Pharma / Healthcare</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Pharma / Healthcare"><div class="cb-box"></div>Pharma / Healthcare</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Education"><div class="cb-box"></div>Education</div>
-          <div class="check-item" onclick="toggleCheck(this)" data-val="Retail/FMCG"><div class="cb-box"></div>Retail / FMCG</div>
-          <div class="check-item" onclick="toggleCheck(this)" data-val="Government/PSU"><div class="cb-box"></div>Government / PSU</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Retail / FMCG"><div class="cb-box"></div>Retail / FMCG</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Government / PSU"><div class="cb-box"></div>Government / PSU</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Startup"><div class="cb-box"></div>Startup</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Professional Services"><div class="cb-box"></div>Professional Services</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Conglomerates"><div class="cb-box"></div>Conglomerates</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Other" data-other="other-industries"><div class="cb-box"></div>Other (please specify)</div>
         </div>
         <div class="other-specify-wrap" id="other-industries" style="display:none">
-          <label>Please describe the industry</label>
-          <input type="text" placeholder="e.g., Non-profit, Media, Logistics...">
+          <label>Please describe the industry</label><input type="text" placeholder="e.g. Energy, Logistics...">
         </div>
 
-        <div class="form-group" style="margin-top:1.3rem"><label>Brief Bio (2-3 sentences) *</label><textarea id="bio" placeholder="Describe your practice, approach, and the impact you create..."></textarea></div>
+        <div class="form-group" style="margin-top:.9rem"><label>Brief Bio (2-3 sentences) *</label><textarea id="bio" rows="3" placeholder="Describe who you are, what you do, and the impact you create..."></textarea></div>
+
+        <div class="form-section-title" style="margin-top:1.2rem">Track record</div>
+        <div class="form-row">
+          <div class="form-group"><label>Approx. individuals coached / trained</label><select id="individuals_coached"><option value="">Select</option><option>Fewer than 50</option><option>50–200</option><option>200–500</option><option>500+</option></select></div>
+          <div class="form-group"><label>Approx. organisations worked with</label><select id="orgs_worked_with"><option value="">Select</option><option>Fewer than 5</option><option>5–20</option><option>20–50</option><option>50+</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Largest programme delivered (cohort size)</label><select id="largest_programme"><option value="">Select</option><option>Fewer than 20</option><option>20–50</option><option>50–200</option><option>200+</option></select></div>
+        </div>
+
+        <div class="form-section-title">AI &amp; digital readiness</div>
+        <div class="form-group"><label>Comfort with AI-assisted coaching tools</label>
+          <div class="radio-row" id="ai_comfort">
+            <label class="radio-item"><input type="radio" name="ai_comfort" value="Actively using AI tools"> Actively using AI tools</label>
+            <label class="radio-item"><input type="radio" name="ai_comfort" value="Open to it"> Open to it</label>
+            <label class="radio-item"><input type="radio" name="ai_comfort" value="Prefer traditional"> Prefer traditional</label>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Experience with digital behaviour change programmes?</label>
+            <div class="yn-row">
+              <button type="button" class="yn-btn" id="digital_bc_yes" onclick="setYN('digital_bc',true)">Yes</button>
+              <button type="button" class="yn-btn" id="digital_bc_no"  onclick="setYN('digital_bc',false)">No</button>
+            </div>
+          </div>
+          <div class="form-group"><label>Willing to be trained in SHIFT methodology?</label>
+            <div class="yn-row">
+              <button type="button" class="yn-btn" id="shift_train_yes" onclick="setYN('shift_train',true)">Yes</button>
+              <button type="button" class="yn-btn" id="shift_train_no"  onclick="setYN('shift_train',false)">No</button>
+            </div>
+          </div>
+        </div>
 
         <div class="form-section-title">Research &amp; publications — links</div>
         <div class="dynamic-list" id="papers-list">
-          <div class="dynamic-row"><input type="text" placeholder="Title — URL or DOI"><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+          <div class="dynamic-row"><input type="url" placeholder="https://..."><button type="button" class="btn-remove" onclick="removeRow(this)">✕</button></div>
         </div>
-        <button class="btn-add-link" onclick="addPaperRow()">+ Add another link</button>
+        <button type="button" class="btn-add-link" onclick="addRow('papers-list')">+ Add another link</button>
 
-        <div class="form-section-title">Upload documents (PDF, Word — max 5MB each)</div>
+        <div class="form-section-title" style="margin-top:1rem">Upload documents (PDF, Word — max 5MB each)</div>
         <div class="file-upload-zone" id="doc-zone">
-          <input type="file" id="doc-files" accept=".pdf,.doc,.docx" multiple onchange="handleFiles(this,'docs')">
+          <input type="file" accept=".pdf,.doc,.docx" multiple onchange="handleDocUpload(event)">
           <span class="file-upload-icon">📄</span>
           <p>Click or drag to upload documents</p>
           <p class="file-hint">PDF, DOC, DOCX · max 5MB per file</p>
         </div>
-        <div class="uploaded-files" id="docs-list"></div>
+        <div class="uploaded-files" id="doc-preview"></div>
 
-        <div class="form-section-title">Videos — links (YouTube, Vimeo, Drive)</div>
+        <div class="form-section-title" style="margin-top:1rem">Videos — links (YouTube, Vimeo, Drive)</div>
         <div class="dynamic-list" id="videos-list">
-          <div class="dynamic-row"><input type="text" placeholder="Title — URL"><button class="btn-remove" onclick="removeRow(this)">✕</button></div>
+          <div class="dynamic-row"><input type="url" placeholder="https://..."><button type="button" class="btn-remove" onclick="removeRow(this)">✕</button></div>
         </div>
-        <button class="btn-add-link" onclick="addVideoRow()">+ Add another link</button>
+        <button type="button" class="btn-add-link" onclick="addRow('videos-list')">+ Add another link</button>
 
-        <div class="form-section-title">Upload video clips (MP4, MOV — max 50MB)</div>
+        <div class="form-section-title" style="margin-top:1rem">Upload video clips (MP4, MOV — max 50MB)</div>
         <div class="file-upload-zone" id="vid-zone">
-          <input type="file" id="vid-files" accept=".mp4,.mov,.webm" multiple onchange="handleFiles(this,'videos')">
+          <input type="file" accept=".mp4,.mov,.webm" multiple onchange="handleVidUpload(event)">
           <span class="file-upload-icon">🎥</span>
           <p>Click or drag to upload video clips</p>
           <p class="file-hint">MP4, MOV, WebM · max 50MB · stored locally</p>
         </div>
-        <div class="uploaded-files" id="vids-list"></div>
+        <div class="uploaded-files" id="vid-preview"></div>
 
-        <div class="form-group" style="margin-top:1.3rem"><label>Research interests</label><textarea id="research_interests" placeholder="e.g., AI-assisted habit formation, cross-cultural leadership..." style="min-height:68px"></textarea></div>
-
-        <div class="form-section-title">Contribution interests</div>
+        <div class="form-section-title" style="margin-top:1rem">Contribution interests</div>
         <div class="checkbox-grid" id="contribution_interests">
           <div class="check-item" onclick="toggleCheck(this)" data-val="Nudge Lab blueprints"><div class="cb-box"></div>Nudge Lab blueprints</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Research inputs"><div class="cb-box"></div>Research inputs</div>
@@ -986,20 +1157,21 @@ body.ticker-hidden .mobile-menu{top:64px!important}
           <div class="check-item" onclick="toggleCheck(this)" data-val="Facilitation"><div class="cb-box"></div>Facilitation</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Conducting Training"><div class="cb-box"></div>Conducting Training</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="OD Intervention"><div class="cb-box"></div>OD Intervention</div>
-          <div class="check-item" onclick="toggleCheck(this)" data-val="L&D Content"><div class="cb-box"></div>L&amp;D Content Development</div>
-          <div class="check-item" onclick="toggleCheck(this)" data-val="AI Coaching"><div class="cb-box"></div>AI-led Coaching</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="L&D Content Development"><div class="cb-box"></div>L&amp;D Content Development</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="AI-led Coaching"><div class="cb-box"></div>AI-led Coaching</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="HR Transformation"><div class="cb-box"></div>HR Transformation</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Other" data-other="other-contrib"><div class="cb-box"></div>Other (please specify)</div>
         </div>
         <div class="other-specify-wrap" id="other-contrib" style="display:none">
           <label>Please describe your contribution interest</label>
-          <input type="text" placeholder="e.g., Community building, Cross-border collaborations...">
+          <input type="text" placeholder="e.g. Case study writing...">
         </div>
-        <div class="form-actions"><button class="btn-back" onclick="goStep(1)">← Back</button><button class="btn-next" onclick="goStep(3)">Continue →</button></div>
+
+        <div class="form-actions"><button class="btn-back" onclick="goStep(2)">← Back</button><button class="btn-next" onclick="goStep(4)">Continue →</button></div>
       </div>
 
-      <!-- STEP 3 -->
-      <div class="form-step" id="step-3">
+      <!-- STEP 4: SERVICES & SUBMIT -->
+      <div class="form-step" id="step-4">
         <h3>Services &amp; collaboration</h3>
         <p class="step-desc">Help us match you to the right opportunities.</p>
 
@@ -1011,57 +1183,94 @@ body.ticker-hidden .mobile-menu{top:64px!important}
           <div class="check-item" onclick="toggleCheck(this)" data-val="Culture Transformation"><div class="cb-box"></div>Culture Transformation</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="L&D Program Design"><div class="cb-box"></div>L&amp;D Program Design</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="HR Transformation"><div class="cb-box"></div>HR Transformation</div>
-          <div class="check-item" onclick="toggleCheck(this)" data-val="Speaking/Keynote"><div class="cb-box"></div>Speaking / Keynote</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Speaking / Keynote"><div class="cb-box"></div>Speaking / Keynote</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="HR Consulting"><div class="cb-box"></div>HR Consulting</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="OD Consulting"><div class="cb-box"></div>OD Consulting</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Training & Development"><div class="cb-box"></div>Training &amp; Development</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Micro-Coaching (hourly)"><div class="cb-box"></div>Micro-Coaching (hourly)</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Team Coaching"><div class="cb-box"></div>Team Coaching</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Other" data-other="other-services"><div class="cb-box"></div>Other (please specify)</div>
         </div>
         <div class="other-specify-wrap" id="other-services" style="display:none">
-          <label>Please describe the service</label>
-          <input type="text" placeholder="e.g., Team diagnostics, Peer coaching circles...">
+          <label>Please describe the service</label><input type="text" placeholder="">
         </div>
 
-        <div class="form-section-title">Engagement types</div>
+        <div class="form-section-title" style="margin-top:1rem">Engagement types</div>
         <div class="checkbox-grid" id="engagement_types">
           <div class="check-item" onclick="toggleCheck(this)" data-val="Monthly retainer"><div class="cb-box"></div>Monthly retainer</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Project-based"><div class="cb-box"></div>Project-based</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="One-off workshops"><div class="cb-box"></div>One-off workshops</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Speaking engagements"><div class="cb-box"></div>Speaking engagements</div>
-          <div class="check-item" onclick="toggleCheck(this)" data-val="Advisory/board"><div class="cb-box"></div>Advisory / board</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Advisory / board"><div class="cb-box"></div>Advisory / board</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="Co-facilitation"><div class="cb-box"></div>Co-facilitation</div>
-          <div class="check-item" onclick="toggleCheck(this)" data-val="HR Transformation Long-term"><div class="cb-box"></div>HR Transformation (Long-term)</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="HR Transformation (Long-term)"><div class="cb-box"></div>HR Transformation (Long-term)</div>
           <div class="check-item" onclick="toggleCheck(this)" data-val="HR Re-engineering"><div class="cb-box"></div>HR Re-engineering</div>
-          <div class="check-item" onclick="toggleCheck(this)" data-val="Other" data-other="other-engagement"><div class="cb-box"></div>Other (please specify)</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Micro-Coaching (hourly)"><div class="cb-box"></div>Micro-Coaching (hourly)</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Other" data-other="other-engagements"><div class="cb-box"></div>Other (please specify)</div>
         </div>
-        <div class="other-specify-wrap" id="other-engagement" style="display:none">
-          <label>Please describe the engagement type</label>
-          <input type="text" placeholder="e.g., Train-the-trainer, Fellowship programme...">
+        <div class="other-specify-wrap" id="other-engagements" style="display:none">
+          <label>Please describe the engagement type</label><input type="text" placeholder="">
         </div>
 
-        <div class="form-row" style="margin-top:1rem">
-          <div class="form-group"><label>Typical engagement fee</label><select id="fee_range"><option value="">Prefer not to say</option><option>Pro-bono</option><option>Under Rs.20K per day</option><option>Rs.20K-50K per day</option><option>Rs.50K-1L per day</option><option>Rs.1L-3L per day</option><option>Rs.3L+ per day</option><option>Variable / negotiable</option></select></div>
+        <div class="form-section-title" style="margin-top:1rem">Micro-coaching specifics</div>
+        <div class="form-row">
+          <div class="form-group"><label>Hourly rate for micro-coaching</label><select id="hourly_rate"><option value="">Select</option><option>Pro-bono / volunteer</option><option>Under Rs.2,000 / hr</option><option>Rs.2,000–5,000 / hr</option><option>Rs.5,000–10,000 / hr</option><option>Rs.10,000–20,000 / hr</option><option>Rs.20,000+ / hr</option><option>Variable / negotiable</option><option>Prefer not to say</option></select></div>
+          <div class="form-group"><label>Minimum session duration</label><select id="min_session_mins"><option value="">Select</option><option>30 minutes</option><option>45 minutes</option><option>60 minutes</option><option>90 minutes</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Maximum concurrent coachees</label><select id="max_coachees"><option value="">Select</option><option>1–5</option><option>6–10</option><option>11–20</option><option>20+</option></select></div>
+          <div class="form-group"><label>Weekly hours available for micro-coaching</label><select id="weekly_hours"><option value="">Select</option><option>Up to 2 hrs/week</option><option>2–5 hrs/week</option><option>5–10 hrs/week</option><option>10+ hrs/week</option></select></div>
+        </div>
+
+        <div class="form-section-title">Virtual session platforms</div>
+        <div class="checkbox-grid check-grid-sm" id="session_platforms">
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Zoom"><div class="cb-box"></div>Zoom</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Microsoft Teams"><div class="cb-box"></div>Microsoft Teams</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Google Meet"><div class="cb-box"></div>Google Meet</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Webex"><div class="cb-box"></div>Webex</div>
+          <div class="check-item" onclick="toggleCheck(this)" data-val="Any platform"><div class="cb-box"></div>Any platform</div>
+        </div>
+
+        <div class="form-row" style="margin-top:.9rem">
+          <div class="form-group"><label>Typical engagement fee (daily rate)</label><select id="fee_range"><option value="">Prefer not to say</option><option>Pro-bono</option><option>Under Rs.20K per day</option><option>Rs.20K-50K per day</option><option>Rs.50K-1L per day</option><option>Rs.1L-3L per day</option><option>Rs.3L+ per day</option><option>Variable / negotiable</option></select></div>
           <div class="form-group"><label>Availability (next 3-6 months)</label><select id="availability"><option value="">Select</option><option>Available - actively looking</option><option>Limited - 1-2 projects max</option><option>Selective - right fit only</option><option>Not available currently</option></select></div>
         </div>
-        <div class="form-group"><label>Signature offering</label><textarea id="signature" placeholder="What makes your service unique..." style="min-height:75px"></textarea></div>
 
-        <div class="form-section-title">Delivery geography <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.72rem;color:var(--muted)">— click in order of priority</span></div>
+        <div class="form-group"><label>Signature offering <span style="font-size:.72rem;color:var(--muted)">(one sentence — what makes you uniquely valuable)</span></label><input type="text" id="signature" placeholder="e.g. I help first-time managers build psychological safety in 90 days..."></div>
+
+        <div class="form-section-title" style="margin-top:1rem">Delivery geography — click in order of priority</div>
         <div class="geo-priority" id="geo-priority">
-          <button type="button" class="geo-btn" onclick="toggleGeo(this)">Pan-India<span class="rank"></span></button>
-          <button type="button" class="geo-btn" onclick="toggleGeo(this)">South Asia<span class="rank"></span></button>
-          <button type="button" class="geo-btn" onclick="toggleGeo(this)">Southeast Asia<span class="rank"></span></button>
-          <button type="button" class="geo-btn" onclick="toggleGeo(this)">Middle East<span class="rank"></span></button>
-          <button type="button" class="geo-btn" onclick="toggleGeo(this)">Global / Virtual<span class="rank"></span></button>
+          <button type="button" class="geo-btn" onclick="toggleGeo(this)" data-val="Pan-India">Pan-India<span class="rank"></span></button>
+          <button type="button" class="geo-btn" onclick="toggleGeo(this)" data-val="South Asia">South Asia<span class="rank"></span></button>
+          <button type="button" class="geo-btn" onclick="toggleGeo(this)" data-val="Southeast Asia">Southeast Asia<span class="rank"></span></button>
+          <button type="button" class="geo-btn" onclick="toggleGeo(this)" data-val="Middle East">Middle East<span class="rank"></span></button>
+          <button type="button" class="geo-btn" onclick="toggleGeo(this)" data-val="Global / Virtual">Global / Virtual<span class="rank"></span></button>
         </div>
 
-        <div class="form-section-title" style="margin-top:1.8rem">Consent *</div>
+        <div class="form-section-title" style="margin-top:1.2rem">Consent *</div>
         <div class="consent-list">
-          <div class="consent-item" onclick="toggleConsent('consent1')"><div class="consent-checkbox" id="consent1"></div><span>I agree to the <a href="#" onclick="openTOS(event)" style="color:var(--violet)">Terms of Service</a> and Content License. Frameworks I contribute will be attributed to me and included in the LivedCulture Intervention Library.</span></div>
-          <div class="consent-item" onclick="toggleConsent('consent2')"><div class="consent-checkbox" id="consent2"></div><span>I consent to my professional profile being listed in the LivedCulture Practitioner Directory.</span></div>
-          <div class="consent-item" onclick="toggleConsent('consent3')"><div class="consent-checkbox" id="consent3"></div><span>I'd like to receive community updates and network news. (Optional)</span></div>
+          <label class="consent-item" onclick="toggleConsent(this)" id="consent1">
+            <div class="consent-checkbox"></div>
+            <span>I agree to the <a href="#" onclick="openTOS(event)">Terms of Service</a> and Content License. Frameworks I contribute will be attributed to me and included in the LivedCulture Intervention Library.</span>
+          </label>
+          <label class="consent-item" onclick="toggleConsent(this)" id="consent2">
+            <div class="consent-checkbox"></div>
+            <span>I consent to my professional profile being listed in the LivedCulture Practitioner Directory.</span>
+          </label>
+          <label class="consent-item" onclick="toggleConsent(this)" id="consent3">
+            <div class="consent-checkbox"></div>
+            <span>I consent to being matched with enterprise clients seeking practitioners with my specialisation (including SHIFT platform clients). (Optional)</span>
+          </label>
+          <label class="consent-item" onclick="toggleConsent(this)" id="consent4">
+            <div class="consent-checkbox"></div>
+            <span>I'd like to receive community updates and network news. (Optional)</span>
+          </label>
         </div>
         <div class="section-error" id="err_consent">Please agree to both required consent items to submit.</div>
-        <div class="form-actions"><button class="btn-back" onclick="goStep(2)">← Back</button><button class="btn-next" onclick="submitForm()">Submit application →</button></div>
+
+        <div class="form-actions"><button class="btn-back" onclick="goStep(3)">← Back</button><button class="btn-next" onclick="submitForm()">Submit application →</button></div>
+      </div>
+
       </div>
     </div>
     <div id="success-view">
@@ -1492,7 +1701,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
     <div class="section-label" style="margin-bottom:.5rem">Admin Access</div>
     <h2 style="font-size:1.2rem;margin-bottom:1.2rem">Sign in to continue</h2>
     <div class="form-group"><label>Admin email</label><input type="email" id="admin-email" placeholder="admin@livedculture.com"></div>
-    <div class="form-group"><label>Password</label><div class="pwd-wrap"><input type="password" id="admin-pass" autocomplete="current-password" placeholder="Your admin password" onkeydown="if(event.key==='Enter')checkAdminLogin()"><button type="button" class="pwd-toggle" onclick="togglePwd('admin-pass',this)" title="Show/hide password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+    <div class="form-group"><label>Password</label><div class="pwd-wrap"><input type="password" id="admin-pass" autocomplete="current-password" placeholder="Your admin password" onkeydown="if(event.key==='Enter')checkAdminLogin()"><button type="button" class="pwd-toggle" onclick="togglePwd('admin-pass',this)" title="Show/hide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
     <div class="admin-login-error" id="admin-error">Incorrect credentials. Please try again.</div>
     <button class="btn-next" onclick="checkAdminLogin()" style="width:100%">Sign in →</button>
     <p style="font-size:.72rem;color:var(--muted);margin-top:1rem;text-align:center">Admin access is granted via the <code>admins</code> table in Supabase — sign in with any account that's been added there.</p>
@@ -1755,6 +1964,22 @@ function setInvalid(id,msg){
   e.addEventListener('input',()=>{e.classList.remove('invalid');document.getElementById(id+'_err')?.remove();},{once:true});
 }
 function setSErr(id,show){const e=document.getElementById(id);if(e)e.style.display=show?'block':'none';}
+/* ── YES/NO TOGGLE ── */
+var _yn = {};
+function setYN(key, val) {
+  _yn[key] = val;
+  const yes = document.getElementById(key + '_yes');
+  const no  = document.getElementById(key + '_no');
+  if (yes) { yes.classList.toggle('sel-yes', val);  yes.classList.toggle('yn-btn', true); }
+  if (no)  { no.classList.toggle('sel-no', !val); no.classList.toggle('yn-btn', true); }
+}
+function getYN(key) { return _yn[key]; }
+
+function getRadio(name) {
+  const el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : '';
+}
+
 function validateStep1(){
   let ok=true;
   ['full_name','email','role','password','confirm_password'].forEach(id=>document.getElementById(id+'_err')?.remove());
@@ -1763,6 +1988,9 @@ function validateStep1(){
   if(!em){setInvalid('email','Email is required.');ok=false;}
   else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){setInvalid('email','Enter a valid email address.');ok=false;}
   if(!v('role')){setInvalid('role','Current role is required.');ok=false;}
+  if(!v('country')){setInvalid('country','Please select your country.');ok=false;}
+  const langs=getChecked('languages');
+  setSErr('err_languages',langs.length===0);if(langs.length===0)ok=false;
   const pw=v('password');
   if(!pw){setInvalid('password','Please set a password.');ok=false;}
   else if(pw.length<8){setInvalid('password','Password must be at least 8 characters.');ok=false;}
@@ -1770,6 +1998,12 @@ function validateStep1(){
   return ok;
 }
 function validateStep2(){
+  // Leadership levels required; everything else optional
+  const levels = getChecked('leadership_levels');
+  setSErr('err_levels', levels.length===0);
+  return levels.length > 0;
+}
+function validateStep3(){
   let ok=true;
   const t=getChecked('practitioner_types');
   setSErr('err_types',t.length===0);if(t.length===0)ok=false;
@@ -1777,7 +2011,7 @@ function validateStep2(){
   if(!v('bio')){setInvalid('bio','A brief bio is required.');ok=false;}
   return ok;
 }
-function validateStep3(){
+function validateStep4(){
   const c1=document.getElementById('consent1').classList.contains('checked');
   const c2=document.getElementById('consent2').classList.contains('checked');
   setSErr('err_consent',!c1||!c2);return c1&&c2;
@@ -1787,6 +2021,10 @@ function validateStep3(){
 function goStep(n){
   if(n===2&&!validateStep1())return;
   if(n===3&&!validateStep2()){
+    document.getElementById('err_levels')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  if(n===4&&!validateStep3()){
     (document.getElementById('err_types').style.display==='block'
       ?document.getElementById('err_types')
       :document.getElementById('bio_err'))?.scrollIntoView({behavior:'smooth',block:'center'});
@@ -1794,7 +2032,7 @@ function goStep(n){
   }
   document.querySelectorAll('.form-step').forEach(s=>s.classList.remove('active'));
   document.getElementById('step-'+n).classList.add('active');
-  [1,2,3].forEach(i=>{
+  [1,2,3,4].forEach(i=>{
     const d=document.getElementById('dot-'+i),l=document.getElementById('lbl-'+i);
     d.classList.remove('active','done');l.classList.remove('active');
     if(i<n){d.classList.add('done');d.textContent='✓';}
@@ -1810,7 +2048,7 @@ function getApps(){return _appsCache;}
 
 /* ── FORM SUBMIT ── */
 async function submitForm(){
-  if(!validateStep3())return;
+  if(!validateStep4())return;
   const pw=v('password');
   const email=v('email');
   const btn=document.querySelector('button[onclick="submitForm()"]');
@@ -1837,17 +2075,36 @@ async function submitForm(){
     full_name:v('full_name'),email,role:v('role'),org:v('org'),
     city:v('city'),country:v('country'),linkedin:v('linkedin'),website:v('website'),
     years_exp:v('years_exp'),referral:v('referral'),
+    photo_url:v('photo_url'),
+    languages:getChecked('languages'),
+    icf_level:getRadio('icf_level'),
+    professional_bodies:getChecked('professional_bodies'),
+    coaching_frameworks:getChecked('coaching_frameworks'),
+    psychometric_tools:getChecked('psychometric_tools'),
+    leadership_levels:getChecked('leadership_levels'),
     practitioner_types:getChecked('practitioner_types'),
     domains:getChecked('domains'),industries:getChecked('industries'),
-    bio:v('bio'),research_interests:v('research_interests'),
+    bio:v('bio'),
+    individuals_coached:v('individuals_coached'),
+    orgs_worked_with:v('orgs_worked_with'),
+    largest_programme:v('largest_programme'),
+    ai_comfort:getRadio('ai_comfort'),
+    digital_bc_exp:_yn['digital_bc']===true,
+    shift_training:_yn['shift_train']===true,
     contribution_interests:getChecked('contribution_interests'),
     papers:getRows('papers-list'),videos:getRows('videos-list'),
     uploaded_docs:uploadedDocs.map(f=>({name:f.name,size:f.size,data:f.data})),
     uploaded_vids:uploadedVids.map(f=>({name:f.name,size:f.size})),
     services:getChecked('services'),engagement_types:getChecked('engagement_types'),
+    hourly_rate:v('hourly_rate'),
+    min_session_mins:v('min_session_mins'),
+    max_coachees:v('max_coachees'),
+    weekly_hours:v('weekly_hours'),
+    session_platforms:getChecked('session_platforms'),
     fee_range:v('fee_range'),availability:v('availability'),
     signature:v('signature'),geo_priority:[...geoOrder],
-    newsletter:document.getElementById('consent3').classList.contains('checked'),
+    enterprise_matching:document.getElementById('consent3').classList.contains('checked'),
+    newsletter:document.getElementById('consent4').classList.contains('checked'),
   };
   const { data: inserted, error: insertErr } = await supabase.from('applications').insert(row).select().single();
   if (insertErr) {
@@ -2817,8 +3074,7 @@ const _origCallAI = typeof callAI !== 'undefined' ? callAI : null;
 /* ── INIT ── */
 supabase.auth.onAuthStateChange((event, session) => {
   if (event === 'PASSWORD_RECOVERY') {
-    _inRecovery = true;
-    if (session) _recoverySession = session;
+    // Arrived via the "reset your password" email link.
     document.getElementById('main-nav').style.display='none';
     document.querySelectorAll('section,footer,.divider').forEach(e=>e.style.display='none');
     document.getElementById('portal') && (document.getElementById('portal').style.display='block');
@@ -2828,7 +3084,6 @@ supabase.auth.onAuthStateChange((event, session) => {
     document.querySelectorAll('#portal-login-form .reset-step').forEach(s=>s.classList.remove('active'));
     document.getElementById('login-step-code').classList.add('active');
   }
-  if (event === 'SIGNED_IN' && _inRecovery) return;
 });
 
 document.addEventListener('DOMContentLoaded', async ()=>{
@@ -2839,12 +3094,15 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     if (data?.session) _recoverySession = data.session;
     return;
   }
-
   await refreshAllData();
   await refreshDirectory();
   initTicker();
   initCommunity();
 
+  // Rehydrate a returning member's session (Supabase persists it across
+  // reloads) so they land straight on their dashboard instead of the
+  // login form. Skip this entirely if we're in the middle of a password
+  // recovery flow — that's handled separately by onAuthStateChange above.
   if (!window.location.hash.includes('type=recovery')) {
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.user) {
