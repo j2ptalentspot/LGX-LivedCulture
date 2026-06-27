@@ -1492,7 +1492,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
     <div class="section-label" style="margin-bottom:.5rem">Admin Access</div>
     <h2 style="font-size:1.2rem;margin-bottom:1.2rem">Sign in to continue</h2>
     <div class="form-group"><label>Admin email</label><input type="email" id="admin-email" placeholder="admin@livedculture.com"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="admin-pass" autocomplete="current-password" placeholder="Your admin password" onkeydown="if(event.key==='Enter')checkAdminLogin()"></div>
+    <div class="form-group"><label>Password</label><div class="pwd-wrap"><input type="password" id="admin-pass" autocomplete="current-password" placeholder="Your admin password" onkeydown="if(event.key==='Enter')checkAdminLogin()"><button type="button" class="pwd-toggle" onclick="togglePwd('admin-pass',this)" title="Show/hide password"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
     <div class="admin-login-error" id="admin-error">Incorrect credentials. Please try again.</div>
     <button class="btn-next" onclick="checkAdminLogin()" style="width:100%">Sign in →</button>
     <p style="font-size:.72rem;color:var(--muted);margin-top:1rem;text-align:center">Admin access is granted via the <code>admins</code> table in Supabase — sign in with any account that's been added there.</p>
@@ -1949,7 +1949,7 @@ async function checkAdminLogin(){
   const p=document.getElementById('admin-pass').value;
   const errEl=document.getElementById('admin-error');
   const { data, error } = await supabase.auth.signInWithPassword({ email:e, password:p });
-  if (error || !data.user) { errEl.style.display='block'; return; }
+  if (error || !data.user) { errEl.textContent = error?.message?.includes('Invalid') ? 'Incorrect password. Please try again.' : (error?.message || 'Incorrect credentials. Please try again.'); errEl.style.display='block'; return; }
   const { data: adminRow } = await supabase.from('admins').select('user_id').eq('user_id', data.user.id).single();
   if (!adminRow) {
     errEl.textContent='That account exists but is not an admin.'; errEl.style.display='block';
@@ -2212,8 +2212,6 @@ async function requestReset() {
 }
 
 async function confirmReset() {
-  // Restore the recovery session in case it was cleared — ensures
-  // supabase.auth.updateUser() has an active session to work with.
   if (_recoverySession) {
     await supabase.auth.setSession({
       access_token: _recoverySession.access_token,
@@ -2834,8 +2832,6 @@ supabase.auth.onAuthStateChange((event, session) => {
 });
 
 document.addEventListener('DOMContentLoaded', async ()=>{
-  // PKCE password-recovery flow: exchange ?code for a session, then
-  // onAuthStateChange fires PASSWORD_RECOVERY which shows the reset form.
   const _recoveryCode = new URLSearchParams(window.location.search).get('code');
   if (_recoveryCode) {
     _inRecovery = true;
@@ -2849,10 +2845,6 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   initTicker();
   initCommunity();
 
-  // Rehydrate a returning member's session (Supabase persists it across
-  // reloads) so they land straight on their dashboard instead of the
-  // login form. Skip this entirely if we're in the middle of a password
-  // recovery flow — that's handled separately by onAuthStateChange above.
   if (!window.location.hash.includes('type=recovery')) {
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.user) {
