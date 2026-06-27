@@ -220,7 +220,7 @@ h2{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,4vw,2.7rem);font-
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
 .form-group{margin-bottom:.9rem}
 .form-group label{display:block;font-size:.78rem;font-weight:500;color:var(--muted);margin-bottom:.35rem}
-.form-group input,.form-group select,.form-group textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:.62rem .85rem;color:var(--text);font-size:.87rem;font-family:inherit;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none}
+.form-group input:not([type=radio]):not([type=checkbox]),.form-group select,.form-group textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:.62rem .85rem;color:var(--text);font-size:.87rem;font-family:inherit;outline:none;transition:border-color .2s,background .2s;-webkit-appearance:none}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:rgba(124,111,255,.5);background:rgba(124,111,255,.04)}
 .form-group input.invalid,.form-group select.invalid,.form-group textarea.invalid{border-color:var(--error)!important}
 .form-group select option{background:#1a1a2e;color:var(--text)}
@@ -1995,6 +1995,15 @@ function getRadio(name) {
   return el ? el.value : '';
 }
 
+/* Visual feedback for native radio-row groups (e.g. AI comfort, ICF level) */
+document.addEventListener('change', function(e){
+  if(e.target && e.target.matches('.radio-row input[type=radio]')){
+    const row = e.target.closest('.radio-row');
+    row.querySelectorAll('.radio-item').forEach(li=>li.classList.remove('selected'));
+    e.target.closest('.radio-item').classList.add('selected');
+  }
+});
+
 function validateStep1(){
   let ok=true;
   ['full_name','email','role','password','confirm_password'].forEach(id=>document.getElementById(id+'_err')?.remove());
@@ -2027,8 +2036,8 @@ function validateStep3(){
   return ok;
 }
 function validateStep4(){
-  const c1=document.getElementById('consent1').classList.contains('checked');
-  const c2=document.getElementById('consent2').classList.contains('checked');
+  const c1=document.getElementById('consent1').querySelector('.consent-checkbox').classList.contains('checked');
+  const c2=document.getElementById('consent2').querySelector('.consent-checkbox').classList.contains('checked');
   setSErr('err_consent',!c1||!c2);return c1&&c2;
 }
 
@@ -2118,8 +2127,8 @@ async function submitForm(){
     session_platforms:getChecked('session_platforms'),
     fee_range:v('fee_range'),availability:v('availability'),
     signature:v('signature'),geo_priority:[...geoOrder],
-    enterprise_matching:document.getElementById('consent3').classList.contains('checked'),
-    newsletter:document.getElementById('consent4').classList.contains('checked'),
+    enterprise_matching:document.getElementById('consent3').querySelector('.consent-checkbox').classList.contains('checked'),
+    newsletter:document.getElementById('consent4').querySelector('.consent-checkbox').classList.contains('checked'),
   };
   const { data: inserted, error: insertErr } = await supabase.from('applications').insert(row).select().single();
   if (insertErr) {
