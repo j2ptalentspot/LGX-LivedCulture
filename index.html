@@ -591,6 +591,10 @@ body.ticker-hidden .mobile-menu{top:64px!important}
   .dir-grid{grid-template-columns:1fr}
 }
 
+
+/* ── INFO ICON ── */
+.info-icon{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;background:rgba(124,111,255,.15);border:1px solid rgba(124,111,255,.35);border-radius:50%;font-size:.65rem;color:var(--violet);cursor:help;margin-left:.35rem;vertical-align:middle;font-style:normal}
+
 /* ── LANGUAGE / CREDENTIALS CHECKBOX GRID ── */
 .check-grid-sm{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:.4rem;margin-top:.4rem}
 .check-grid-sm .check-item{font-size:.77rem;padding:.38rem .6rem}
@@ -1006,7 +1010,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
           <div class="checkbox-grid check-grid-sm" id="leadership_levels">
             <div class="check-item" onclick="toggleCheck(this)" data-val="Individual Contributors"><div class="cb-box"></div>Individual Contributors</div>
             <div class="check-item" onclick="toggleCheck(this)" data-val="Team Leads / Managers"><div class="cb-box"></div>Team Leads / Managers</div>
-            <div class="check-item" onclick="toggleCheck(this)" data-val="Senior Managers / Directors"><div class="cb-box"></div>Sr. Managers / Directors</div>
+            <div class="check-item" onclick="toggleCheck(this)" data-val="Department / Functional Heads"><div class="cb-box"></div>Department / Functional Heads</div>
             <div class="check-item" onclick="toggleCheck(this)" data-val="VPs / Business Heads"><div class="cb-box"></div>VPs / Business Heads</div>
             <div class="check-item" onclick="toggleCheck(this)" data-val="C-Suite / Board"><div class="cb-box"></div>C-Suite / Board</div>
           </div>
@@ -1108,7 +1112,11 @@ body.ticker-hidden .mobile-menu{top:64px!important}
               <button type="button" class="yn-btn" id="digital_bc_no"  onclick="setYN('digital_bc',false)">No</button>
             </div>
           </div>
-          <div class="form-group"><label>Willing to be trained in SHIFT methodology?</label>
+          <div class="form-group">
+            <label>Willing to be trained in SHIFT methodology?
+              <span class="info-icon" title="SHIFT is LivedCulture's AI-powered behaviour change engine. Trained practitioners are matched with enterprise clients for micro-coaching sessions and can contribute nudge blueprints to the SHIFT Library. Training is free and takes approx. 2-3 hours online.">ℹ</span>
+            </label>
+            <p style="font-size:.73rem;color:var(--muted);margin:.25rem 0 .5rem;line-height:1.55">SHIFT is an AI-powered behaviour change platform for enterprises. Trained practitioners are matched with clients for micro-coaching and contribute to the SHIFT content library. Hover the ℹ for details.</p>
             <div class="yn-row">
               <button type="button" class="yn-btn" id="shift_train_yes" onclick="setYN('shift_train',true)">Yes</button>
               <button type="button" class="yn-btn" id="shift_train_no"  onclick="setYN('shift_train',false)">No</button>
@@ -1249,19 +1257,19 @@ body.ticker-hidden .mobile-menu{top:64px!important}
 
         <div class="form-section-title" style="margin-top:1.2rem">Consent *</div>
         <div class="consent-list">
-          <label class="consent-item" onclick="toggleConsent(this)" id="consent1">
+          <label class="consent-item" onclick="toggleConsentItem(this)" id="consent1">
             <div class="consent-checkbox"></div>
             <span>I agree to the <a href="#" onclick="openTOS(event)">Terms of Service</a> and Content License. Frameworks I contribute will be attributed to me and included in the LivedCulture Intervention Library.</span>
           </label>
-          <label class="consent-item" onclick="toggleConsent(this)" id="consent2">
+          <label class="consent-item" onclick="toggleConsentItem(this)" id="consent2">
             <div class="consent-checkbox"></div>
             <span>I consent to my professional profile being listed in the LivedCulture Practitioner Directory.</span>
           </label>
-          <label class="consent-item" onclick="toggleConsent(this)" id="consent3">
+          <label class="consent-item" onclick="toggleConsentItem(this)" id="consent3">
             <div class="consent-checkbox"></div>
             <span>I consent to being matched with enterprise clients seeking practitioners with my specialisation (including SHIFT platform clients). (Optional)</span>
           </label>
-          <label class="consent-item" onclick="toggleConsent(this)" id="consent4">
+          <label class="consent-item" onclick="toggleConsentItem(this)" id="consent4">
             <div class="consent-checkbox"></div>
             <span>I'd like to receive community updates and network news. (Optional)</span>
           </label>
@@ -1744,7 +1752,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('tos-modal')">&#x2715;</button>
     <h2>Terms of Service &amp; Content License</h2>
-    <p class="modal-sub">Last updated: June 2025</p>
+    <p class="modal-sub">Last updated: June 2026</p>
     <h3>1. Membership</h3><p>By joining the LivedCulture Practitioner Network, you confirm that the information you provide is accurate and that you are a practicing professional in coaching, facilitation, L&amp;D, OD, HR, or a related behavioural science discipline.</p>
     <h3>2. Content License</h3><p>Any frameworks, nudge blueprints, interventions, case studies, or content you contribute are licensed to LivedCulture on a perpetual, non-exclusive basis. Your authorship and attribution will always be preserved. You retain ownership of your original intellectual property.</p>
     <h3>3. Use of Your Profile</h3><p>With your consent, your professional profile will be listed in the LivedCulture Practitioner Directory. You may request removal at any time by writing to team@lgx-livedculture.org.</p>
@@ -1968,10 +1976,17 @@ function setSErr(id,show){const e=document.getElementById(id);if(e)e.style.displ
 var _yn = {};
 function setYN(key, val) {
   _yn[key] = val;
-  const yes = document.getElementById(key + '_yes');
-  const no  = document.getElementById(key + '_no');
-  if (yes) { yes.classList.toggle('sel-yes', val);  yes.classList.toggle('yn-btn', true); }
-  if (no)  { no.classList.toggle('sel-no', !val); no.classList.toggle('yn-btn', true); }
+  var yesBtn = document.getElementById(key + '_yes');
+  var noBtn  = document.getElementById(key + '_no');
+  if (yesBtn) { yesBtn.className = val  ? 'yn-btn sel-yes' : 'yn-btn'; }
+  if (noBtn)  { noBtn.className  = !val ? 'yn-btn sel-no'  : 'yn-btn'; }
+}
+/* toggleConsentItem — handles consent checkbox items correctly */
+function toggleConsentItem(el) {
+  var box = el.querySelector('.consent-checkbox');
+  if (!box) return;
+  var isChecked = box.classList.toggle('checked');
+  box.textContent = isChecked ? '✓' : '';
 }
 function getYN(key) { return _yn[key]; }
 
