@@ -1555,6 +1555,8 @@ const SUPABASE_URL = 'https://oxmsifvhekddsygwvedw.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bXNpZnZoZWtkZHN5Z3d2ZWR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzU0NjksImV4cCI6MjA5Njk1MTQ2OX0._Q0fHbzY0t7thPptA4-e-zN5pBnNTQFphLNhGbMmirk';
 // ──────────────────────────────────────────────────────────────────
 var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var _inRecovery = false;
+var _recoverySession = null;
 
 let adminLoggedIn = false;
 let currentFilter = 'all';
@@ -2210,6 +2212,14 @@ async function requestReset() {
 }
 
 async function confirmReset() {
+  // Restore the recovery session in case it was cleared — ensures
+  // supabase.auth.updateUser() has an active session to work with.
+  if (_recoverySession) {
+    await supabase.auth.setSession({
+      access_token: _recoverySession.access_token,
+      refresh_token: _recoverySession.refresh_token
+    });
+  }
   const np = document.getElementById('new-pass').value;
   const nc = document.getElementById('new-pass-confirm').value;
   const errEl = document.getElementById('code-error');
@@ -2809,7 +2819,8 @@ const _origCallAI = typeof callAI !== 'undefined' ? callAI : null;
 /* ── INIT ── */
 supabase.auth.onAuthStateChange((event, session) => {
   if (event === 'PASSWORD_RECOVERY') {
-    // Arrived via the "reset your password" email link.
+    _inRecovery = true;
+    if (session) _recoverySession = session;
     document.getElementById('main-nav').style.display='none';
     document.querySelectorAll('section,footer,.divider').forEach(e=>e.style.display='none');
     document.getElementById('portal') && (document.getElementById('portal').style.display='block');
@@ -2819,17 +2830,18 @@ supabase.auth.onAuthStateChange((event, session) => {
     document.querySelectorAll('#portal-login-form .reset-step').forEach(s=>s.classList.remove('active'));
     document.getElementById('login-step-code').classList.add('active');
   }
+  if (event === 'SIGNED_IN' && _inRecovery) return;
 });
 
 document.addEventListener('DOMContentLoaded', async ()=>{
-  // Handle PKCE password-recovery flow (newer Supabase default).
-  // When a recovery link is clicked, Supabase redirects here with ?code=xxx.
-  // We exchange it for a session; onAuthStateChange then fires PASSWORD_RECOVERY
-  // and shows the reset form automatically.
+  // PKCE password-recovery flow: exchange ?code for a session, then
+  // onAuthStateChange fires PASSWORD_RECOVERY which shows the reset form.
   const _recoveryCode = new URLSearchParams(window.location.search).get('code');
   if (_recoveryCode) {
-    await supabase.auth.exchangeCodeForSession(_recoveryCode);
-    return; // onAuthStateChange takes over from here
+    _inRecovery = true;
+    const { data } = await supabase.auth.exchangeCodeForSession(_recoveryCode);
+    if (data?.session) _recoverySession = data.session;
+    return;
   }
 
   await refreshAllData();
@@ -2845,7 +2857,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.user) {
       const { data: app } = await supabase.from('applications').select('*').eq('user_id', session.user.id).single();
-      if (app) {
+      if (app && !_inRecovery) {
         portalUser = app;
         document.getElementById('portal-login-form').style.display='none';
         document.getElementById('portal-dashboard').style.display='block';
