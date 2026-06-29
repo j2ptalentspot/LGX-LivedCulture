@@ -873,7 +873,10 @@ body.ticker-hidden .mobile-menu{top:64px!important}
           <div class="form-group"><label>Email address *</label><input type="email" id="email" placeholder="jane@company.com"></div>
         </div>
         <div class="form-row">
+          <div class="form-group"><label>Mobile number *</label><input type="tel" id="mobile" placeholder="+91 98765 43210"></div>
           <div class="form-group"><label>Current role *</label><input type="text" id="role" placeholder="Executive Coach"></div>
+        </div>
+        <div class="form-row">
           <div class="form-group"><label>Organisation</label><input type="text" id="org" placeholder="Independent / Company name"></div>
         </div>
         <div class="form-row">
@@ -1363,10 +1366,12 @@ body.ticker-hidden .mobile-menu{top:64px!important}
           <h3 id="portal-name">Welcome back</h3>
           <div class="portal-status">
             <span class="status-badge" id="portal-status-badge">pending</span>
+            <button class="btn-back" id="portal-edit-btn" onclick="openProfileEdit()" style="font-size:.75rem;padding:.3rem .7rem">✎ Edit profile</button>
             <button class="btn-back" onclick="practitionerLogout()" style="font-size:.75rem;padding:.3rem .7rem">Log out</button>
           </div>
         </div>
         <div id="portal-profile-details"></div>
+        <div id="portal-profile-edit" style="display:none;margin-top:1.2rem;padding-top:1.1rem;border-top:1px solid var(--border)"></div>
       </div>
       </div><!-- /ptab-profile -->
       <div class="ptab-content" id="ptab-content">
@@ -1668,10 +1673,11 @@ body.ticker-hidden .mobile-menu{top:64px!important}
       <h4>🤖 AI Toolkit Settings</h4>
     </div>
     <div class="admin-ai-body">
-      <label>API KEY</label>
-      <input type="password" id="admin-ai-key-input" placeholder="Configure the AI key for the practitioner toolkit">
-      <button class="btn-save-key" onclick="saveAdminAIKey()">Save key</button>
-      <div class="admin-ai-status" id="admin-ai-key-status">✓ Saved — AI tools active for members</div>
+      <p style="font-size:.85rem;color:var(--muted);line-height:1.6">
+        The OpenAI key is now configured securely on the server (Supabase Edge Function secret) rather than in the browser.
+        AI tools automatically unlock for any member whose application status is <strong>Approved</strong> — no key entry needed here or by members.
+        To rotate the key, update the <code>OPENAI_API_KEY</code> secret in your Supabase project (Project Settings → Edge Functions → Secrets).
+      </p>
     </div>
   </div>
 
@@ -2006,11 +2012,14 @@ document.addEventListener('change', function(e){
 
 function validateStep1(){
   let ok=true;
-  ['full_name','email','role','password','confirm_password'].forEach(id=>document.getElementById(id+'_err')?.remove());
+  ['full_name','email','mobile','role','password','confirm_password'].forEach(id=>document.getElementById(id+'_err')?.remove());
   if(!v('full_name')){setInvalid('full_name','Full name is required.');ok=false;}
   const em=v('email');
   if(!em){setInvalid('email','Email is required.');ok=false;}
   else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){setInvalid('email','Enter a valid email address.');ok=false;}
+  const mob=v('mobile');
+  if(!mob){setInvalid('mobile','Mobile number is required.');ok=false;}
+  else if(!/^[+\d][\d\s-]{7,16}$/.test(mob)){setInvalid('mobile','Enter a valid mobile number.');ok=false;}
   if(!v('role')){setInvalid('role','Current role is required.');ok=false;}
   if(!v('country')){setInvalid('country','Please select your country.');ok=false;}
   const langs=getChecked('languages');
@@ -2096,7 +2105,7 @@ async function submitForm(){
   // 2. Insert the application row, linked to that account.
   const row={
     user_id:userId, status:'pending',
-    full_name:v('full_name'),email,role:v('role'),org:v('org'),
+    full_name:v('full_name'),email,mobile:v('mobile'),role:v('role'),org:v('org'),
     city:v('city'),country:v('country'),linkedin:v('linkedin'),website:v('website'),
     years_exp:v('years_exp'),referral:v('referral'),
     photo_url:v('photo_url'),
@@ -2142,6 +2151,7 @@ async function submitForm(){
   document.getElementById('form-container').style.display='none';
   document.getElementById('form-stepper').style.display='none';
   document.getElementById('success-view').style.display='block';
+  document.getElementById('success-view').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 /* ── PRACTITIONER PORTAL ── */
@@ -2189,6 +2199,63 @@ function renderPortalDashboard(app){
     d.innerHTML=`<span>📎</span><span class="uploaded-file-name">${esc(f.name)}</span><span class="uploaded-file-size">${kb}KB</span>`;
     dList.appendChild(d);
   });
+}
+function openProfileEdit(){
+  if(!portalUser)return;
+  const a=portalUser;
+  document.getElementById('portal-profile-edit').innerHTML=`
+    <div class="form-row">
+      <div class="form-group"><label>Full name</label><input type="text" id="edit_full_name" value="${esc(a.full_name)}"></div>
+      <div class="form-group"><label>Mobile number</label><input type="tel" id="edit_mobile" value="${esc(a.mobile)}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Current role</label><input type="text" id="edit_role" value="${esc(a.role)}"></div>
+      <div class="form-group"><label>Organisation</label><input type="text" id="edit_org" value="${esc(a.org)}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>City</label><input type="text" id="edit_city" value="${esc(a.city)}"></div>
+      <div class="form-group"><label>Country</label><input type="text" id="edit_country" value="${esc(a.country)}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>LinkedIn profile</label><input type="url" id="edit_linkedin" value="${esc(a.linkedin)}"></div>
+      <div class="form-group"><label>Website / portfolio</label><input type="url" id="edit_website" value="${esc(a.website)}"></div>
+    </div>
+    <div class="form-group"><label>Bio</label><textarea id="edit_bio">${esc(a.bio)}</textarea></div>
+    <div id="portal-edit-err" class="field-error" style="display:none"></div>
+    <div style="display:flex;gap:.6rem;margin-top:.8rem">
+      <button class="btn-next" onclick="saveProfileEdit()">Save changes →</button>
+      <button class="btn-ghost" onclick="closeProfileEdit()">Cancel</button>
+      <div id="portal-edit-msg" style="display:none;align-items:center;gap:.4rem;color:#34d399;font-size:.85rem">✓ Saved successfully</div>
+    </div>
+  `;
+  document.getElementById('portal-profile-edit').style.display='block';
+  document.getElementById('portal-edit-btn').style.display='none';
+}
+function closeProfileEdit(){
+  document.getElementById('portal-profile-edit').style.display='none';
+  document.getElementById('portal-profile-edit').innerHTML='';
+  document.getElementById('portal-edit-btn').style.display='inline-block';
+}
+async function saveProfileEdit(){
+  if(!portalUser)return;
+  const errEl=document.getElementById('portal-edit-err');
+  errEl.style.display='none';
+  const full_name=v('edit_full_name'),role=v('edit_role'),mobile=v('edit_mobile');
+  if(!full_name||!role){errEl.textContent='Full name and current role are required.';errEl.style.display='block';return;}
+  const updates={
+    full_name, mobile, role,
+    org:v('edit_org'), city:v('edit_city'), country:v('edit_country'),
+    linkedin:v('edit_linkedin'), website:v('edit_website'), bio:v('edit_bio')
+  };
+  const { data: updated, error } = await supabase.from('applications')
+    .update(updates).eq('id', portalUser.id).select().single();
+  if (error) { errEl.textContent='Could not save changes: '+error.message; errEl.style.display='block'; return; }
+  await refreshApps();
+  portalUser=updated;
+  renderPortalDashboard(updated);
+  closeProfileEdit();
+  const msg=document.getElementById('portal-edit-msg');
+  if(msg){msg.style.display='flex';setTimeout(()=>msg.style.display='none',2500);}
 }
 async function savePortalUpdates(){
   if(!portalUser)return;
@@ -2283,7 +2350,7 @@ function renderTable(apps,filter){
     const loc=[a.city,a.country].filter(Boolean).join(', ')||'—';
     const dt=a.created_at?new Date(a.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—';
     return`<tr>
-      <td><div style="font-weight:600">${esc(a.full_name)}</div><div style="font-size:.72rem;color:var(--muted)">${esc(a.email)}</div></td>
+      <td><div style="font-weight:600">${esc(a.full_name)}</div><div style="font-size:.72rem;color:var(--muted)">${esc(a.email)}</div><div style="font-size:.72rem;color:var(--muted)">${esc(a.mobile)||''}</div></td>
       <td style="color:var(--muted)">${esc(a.role)}</td>
       <td style="color:var(--muted)">${esc(loc)}</td>
       <td style="color:var(--muted);font-size:.78rem">${esc(types)||'—'}</td>
@@ -2323,7 +2390,7 @@ function viewApp(id){
     <p style="color:var(--muted);font-size:.83rem;margin-bottom:0">Applied ${dt} · <span class="status-badge ${app.status}" style="margin-left:.3rem">${app.status}</span></p>
     <div style="margin-top:1.3rem;padding:.9rem 1rem;background:var(--bg3);border-radius:10px;border:1px solid var(--border)">
       <div class="app-detail-grid">
-        ${field('Email',app.email)}${field('Role',app.role)}${field('Organisation',app.org)}
+        ${field('Email',app.email)}${field('Mobile',app.mobile)}${field('Role',app.role)}${field('Organisation',app.org)}
         ${field('City',app.city)}${field('Country',app.country)}${field('Experience',app.years_exp)}
         ${field('Referral',app.referral)}${field('Fee range',app.fee_range)}${field('Availability',app.availability)}
       </div>
@@ -2357,9 +2424,9 @@ function viewApp(id){
 function exportCSV(){
   const apps=getApps();
   if(!apps.length){alert('No applications to export yet.');return;}
-  const h=['Name','Email','Role','Organisation','City','Country','LinkedIn','Website','Years Exp','Referral','Practitioner Types','Behavioral Domains','Industries','Bio','Research Interests','Contribution Interests','Paper Links','Video Links','Uploaded Docs','Services Offered','Engagement Types','Fee Range','Availability','Signature','Geography','Status','Applied'];
+  const h=['Name','Email','Mobile','Role','Organisation','City','Country','LinkedIn','Website','Years Exp','Referral','Practitioner Types','Behavioral Domains','Industries','Bio','Research Interests','Contribution Interests','Paper Links','Video Links','Uploaded Docs','Services Offered','Engagement Types','Fee Range','Availability','Signature','Geography','Status','Applied'];
   const rows=apps.map(a=>[
-    a.full_name,a.email,a.role,a.org,a.city,a.country,a.linkedin,a.website,a.years_exp,a.referral,
+    a.full_name,a.email,a.mobile,a.role,a.org,a.city,a.country,a.linkedin,a.website,a.years_exp,a.referral,
     (a.practitioner_types||[]).join('; '),(a.domains||[]).join('; '),(a.industries||[]).join('; '),
     a.bio,a.research_interests,(a.contribution_interests||[]).join('; '),
     (a.papers||[]).join('; '),(a.videos||[]).join('; '),
@@ -2437,28 +2504,16 @@ document.addEventListener('DOMContentLoaded', () => {
 function toggleAISettings() {
   const el = document.getElementById('admin-ai-settings');
   el.style.display = el.style.display === 'none' ? 'block' : 'none';
-  if (el.style.display === 'block') {
-    const k = localStorage.getItem('lc_ai_key') || '';
-    document.getElementById('admin-ai-key-input').value = k ? '••••••••••••••••' : '';
-  }
-}
-function saveAdminAIKey() {
-  const k = document.getElementById('admin-ai-key-input').value.trim();
-  if (!k || k.startsWith('•')) return;
-  localStorage.setItem('lc_ai_key', k);
-  const s = document.getElementById('admin-ai-key-status');
-  s.style.display = 'flex';
-  setTimeout(() => s.style.display = 'none', 3000);
 }
 
 /* ── AI TOOLS STATUS (portal) ── */
 function renderAIStatus() {
   const el = document.getElementById('ai-tools-status');
   if (!el) return;
-  const hasKey = !!localStorage.getItem('lc_ai_key');
-  el.innerHTML = hasKey
+  const approved = portalUser && portalUser.status === 'approved';
+  el.innerHTML = approved
     ? '<div class="ai-tools-ready">✅ AI tools are active and ready to use</div>'
-    : '<div class="ai-tools-not-ready">⏳ AI tools are being configured by the network admin. They will be available for you soon — please check back shortly.</div>';
+    : '<div class="ai-tools-not-ready">⏳ AI tools unlock automatically once your membership is approved.</div>';
 }
 
 /* ── PASSWORD RESET ── */
@@ -2547,12 +2602,7 @@ function switchTab(tab, btn) {
   if (tab === 'ai') renderAIStatus();
 }
 
-function saveAIKey() { /* handled by admin panel */ }
-
-function getAIKey() { return localStorage.getItem('lc_ai_key') || ''; }
-
 async function callAI(prompt, btnId, outputId, bodyId, errorId) {
-  const key = getAIKey();
   const btn = document.getElementById(btnId);
   const outputEl = document.getElementById(outputId);
   const bodyEl = document.getElementById(bodyId);
@@ -2560,8 +2610,10 @@ async function callAI(prompt, btnId, outputId, bodyId, errorId) {
 
   errEl.style.display = 'none';
 
-  if (!key) {
-    errEl.textContent = 'Please enter and save your OpenAI API key above to use this tool.';
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData?.session?.access_token;
+  if (!token) {
+    errEl.textContent = 'Please log in to your practitioner account to use AI tools.';
     errEl.style.display = 'block';
     return;
   }
@@ -2571,25 +2623,22 @@ async function callAI(prompt, btnId, outputId, bodyId, errorId) {
   outputEl.style.display = 'none';
 
   try {
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/ai-proxy', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 2000,
-        temperature: 0.75
-      })
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ prompt })
     });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error?.message || 'API error ' + res.status);
-    }
     const data = await res.json();
-    const aiOut = data.choices[0].message.content;
+    if (!res.ok) throw new Error(data.error || ('AI request failed (' + res.status + ')'));
+    const aiOut = data.text;
     bodyEl.textContent = aiOut;
     outputEl.style.display = 'block';
-    if(portalUser) addKBEntry('micro-learning',document.getElementById('wc-btn').closest('.ai-tool-panel').querySelector('h3').textContent,aiOut,'ai-tool',{name:portalUser.full_name,role:portalUser.role},[(portalUser.practitioner_types||[])[0]||'']);
+    if (portalUser) {
+      const panelTitle = btn.closest('.ai-tool-panel').querySelector('h3').textContent;
+      addKBEntry('micro-learning', panelTitle,
+        'Context provided by practitioner:\n' + prompt + '\n\n---\n\nAI-generated output:\n' + aiOut,
+        'ai-tool', { name: portalUser.full_name, role: portalUser.role }, [(portalUser.practitioner_types || [])[0] || '']);
+    }
     outputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } catch (e) {
     errEl.textContent = 'Error: ' + e.message;
