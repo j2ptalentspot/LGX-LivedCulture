@@ -92,8 +92,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .other-specify-wrap input:focus{border-color:rgba(124,111,255,.5)}
 .other-specify-wrap label{font-size:.72rem;color:var(--violet);font-weight:600;letter-spacing:.05em;display:block;margin-bottom:.35rem}
 .nav-links{display:flex;align-items:center;gap:1.8rem}
-.nav-links a{font-size:.85rem;font-weight:500;color:var(--muted);text-decoration:none;transition:color .2s}
-.nav-links a:hover{color:var(--text)}
+.nav-links a{font-size:.85rem;font-weight:600;color:var(--text);text-decoration:none;transition:color .2s,background .2s;padding:.4rem .7rem;border-radius:7px}
+.nav-links a:hover{color:#fff;background:rgba(124,111,255,.14)}
 .btn-nav{font-size:.82rem;font-weight:600;color:#fff!important;background:var(--violet);padding:.45rem 1.1rem;border-radius:6px;transition:background .2s!important}
 .btn-nav:hover{background:var(--violet-d)!important}
 .btn-nav-ghost{font-size:.82rem;font-weight:500;color:var(--muted)!important;border:1px solid var(--border);padding:.4rem .9rem;border-radius:6px;transition:all .2s!important}
@@ -162,6 +162,9 @@ h2{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,4vw,2.7rem);font-
 .mission-callout{margin:1.5rem 0;padding:1.4rem 1.6rem;background:linear-gradient(135deg,rgba(124,111,255,.1),rgba(34,211,238,.06));border:1px solid rgba(124,111,255,.2);border-radius:14px}
 .mission-callout p{color:var(--text)!important;font-size:.97rem!important;font-weight:500;line-height:1.75;margin:0!important}
 .quote-block{margin-top:1.5rem;padding:1rem 1.4rem;border-left:3px solid var(--violet);background:rgba(124,111,255,.06);border-radius:0 8px 8px 0}
+.cocreator-highlight{margin:1.3rem 0;padding:1.1rem 1.4rem;border-radius:12px;background:linear-gradient(135deg,rgba(124,111,255,.16),rgba(34,211,238,.1));border:1px solid rgba(124,111,255,.35);box-shadow:0 0 24px rgba(124,111,255,.12)}
+.cocreator-highlight p{margin:0;color:#fff;font-weight:600;font-size:.97rem;line-height:1.65}
+.cocreator-highlight p strong{color:var(--cyan)}
 .quote-block p{font-style:italic;color:var(--muted);font-size:.88rem;line-height:1.7}
 .about-platform{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
 .platform-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.3rem;transition:border-color .2s,background .2s}
@@ -321,8 +324,8 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:2.2rem 5
 .modal-close:hover{background:rgba(255,255,255,.12);color:var(--text)}
 .modal-box h2{font-size:1.35rem;margin-bottom:.25rem;font-family:'Playfair Display',serif}
 .modal-sub{font-size:.85rem;color:var(--muted);margin-bottom:1.3rem}
-.modal-box p{color:var(--muted);font-size:.88rem;line-height:1.8;margin-bottom:.75rem}
-.modal-box p strong{color:var(--text)}
+.modal-box p{color:#d4d4e8;font-size:.88rem;line-height:1.8;margin-bottom:.75rem}
+.modal-box p strong{color:#fff}
 .modal-box h3{font-size:.92rem;margin:1.2rem 0 .35rem;color:var(--text)}
 .admin-login-error{font-size:.78rem;color:var(--error);margin-bottom:.7rem;display:none;padding:.4rem .7rem;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:6px}
 
@@ -725,7 +728,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
           <p>We foresee a huge transformation in the way people learn, grow, and develop — and hence, organisations will unexpectedly change the ways of implementing their learning and OD interventions in line with the pace of technological change.</p>
         </div>
         <p>LivedCulture exists to close that gap — not through more training, but through behavioural science applied at the moment that matters. LivedCulture is <strong>precisely addressing the challenge head-on</strong> to co-create the future through hyper-focused learning strategies, micro-interventions, micro-coaching and highly customised programs.</p>
-        <p>By joining this network, you are not just a user — you are a <strong>co-creator</strong> of the world's most practitioner-validated behavioural change movement.</p>
+        <div class="cocreator-highlight"><p>By joining this network, you are not just a user — you are a <strong>co-creator</strong> of the world's most practitioner-validated behavioural change movement.</p></div>
         <div class="quote-block">
           <p>"Join the exchange. Shape what's next."</p>
         </div>
@@ -1732,6 +1735,24 @@ body.ticker-hidden .mobile-menu{top:64px!important}
   </div>
 </div>
 
+<!-- WELCOME MODAL (first portal visit) -->
+<div class="modal-overlay" id="welcome-modal">
+  <div class="modal-box" style="max-width:560px">
+    <button class="modal-close" onclick="closeModal('welcome-modal')">&#x2715;</button>
+    <div class="section-label">Welcome</div>
+    <h2 id="welcome-modal-title">Welcome to LivedCulture</h2>
+    <p class="modal-sub">Here's what you can do as a member</p>
+    <div style="display:flex;flex-direction:column;gap:.9rem;margin:1.1rem 0">
+      <div style="display:flex;gap:.8rem;align-items:flex-start"><span style="font-size:1.3rem">🤖</span><div><strong style="color:#fff;font-size:.92rem">Use AI Tools</strong><p style="margin:.15rem 0 0;color:#d4d4e8;font-size:.85rem;line-height:1.6">Generate workshop content, exercises, and discussion questions tailored to your sessions — built right into your portal.</p></div></div>
+      <div style="display:flex;gap:.8rem;align-items:flex-start"><span style="font-size:1.3rem">📎</span><div><strong style="color:#fff;font-size:.92rem">Add Content</strong><p style="margin:.15rem 0 0;color:#d4d4e8;font-size:.85rem;line-height:1.6">Contribute frameworks, papers, and resources to the LivedCulture Intervention Library — attributed to you.</p></div></div>
+      <div style="display:flex;gap:.8rem;align-items:flex-start"><span style="font-size:1.3rem">💬</span><div><strong style="color:#fff;font-size:.92rem">Ask the Network</strong><p style="margin:.15rem 0 0;color:#d4d4e8;font-size:.85rem;line-height:1.6">Post questions, share answers, and learn from peer practitioners across the community.</p></div></div>
+      <div style="display:flex;gap:.8rem;align-items:flex-start"><span style="font-size:1.3rem">🧭</span><div><strong style="color:#fff;font-size:.92rem">Stay Visible</strong><p style="margin:.15rem 0 0;color:#d4d4e8;font-size:.85rem;line-height:1.6">Keep your profile current — an active, complete profile is what gets you discovered in the Practitioner Directory.</p></div></div>
+    </div>
+    <div class="cocreator-highlight" style="margin-top:0"><p>The more you contribute, the more valuable this network becomes — for you and for everyone in it.</p></div>
+    <div style="text-align:center;margin-top:1.3rem"><button class="btn-primary" onclick="closeModal('welcome-modal')">Let's get started →</button></div>
+  </div>
+</div>
+
 <!-- ABOUT MODAL -->
 <div class="modal-overlay" id="about-modal">
   <div class="modal-box">
@@ -2195,7 +2216,16 @@ async function practitionerLogin(){
   document.getElementById('portal-dashboard').style.display='block';
   renderPortalDashboard(app);
   checkStatusChangeNotice(app);
+  checkFirstVisitWelcome(app);
   initCommunity();
+}
+function checkFirstVisitWelcome(app){
+  const key='lc_welcomed_'+app.id;
+  if(!localStorage.getItem(key)){
+    document.getElementById('welcome-modal-title').textContent='Welcome, '+app.full_name.split(' ')[0]+'!';
+    openModal('welcome-modal');
+    localStorage.setItem(key,'1');
+  }
 }
 function checkStatusChangeNotice(app){
   const key='lc_last_status_'+app.id;
