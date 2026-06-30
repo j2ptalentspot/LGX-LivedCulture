@@ -288,6 +288,7 @@ h2{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,4vw,2.7rem);font-
 .portal-login-wrap h3{font-size:1rem;font-weight:600;margin-bottom:.3rem}
 .portal-login-wrap p{font-size:.82rem;color:var(--muted);margin-bottom:1.5rem}
 #portal-dashboard{display:none;margin-top:2.5rem}
+.portal-status-banner{display:flex;align-items:center;gap:.6rem;background:rgba(124,111,255,.12);border:1px solid rgba(124,111,255,.3);border-radius:10px;padding:.8rem 1.1rem;margin-bottom:1.2rem;font-size:.88rem;color:var(--text)}
 .portal-profile{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:1.8rem;margin-bottom:1.5rem}
 .portal-profile-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
 .portal-profile-header h3{font-size:1.05rem;font-weight:600}
@@ -653,11 +654,11 @@ body.ticker-hidden .mobile-menu{top:64px!important}
   <div class="nav-links">
     <a href="#about">About</a>
     <a href="#how">How it works</a>
-    <a href="#ai-tools">AI Tools</a>
     <a href="#value">Why join</a>
+    <a href="#ai-tools">AI Tools</a>
+    <a href="#portal" class="btn-nav-ghost">Practitioner Login</a>
     <a href="#community">Community</a>
     <a href="#directory">Directory</a>
-    <a href="#portal" class="btn-nav-ghost">Practitioner Login</a>
     <a href="#join" class="btn-nav">Join the Network</a>
   </div>
   <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
@@ -669,11 +670,11 @@ body.ticker-hidden .mobile-menu{top:64px!important}
 <div class="mobile-menu" id="mobile-menu">
   <a href="#about" onclick="closeMenu()">About</a>
   <a href="#how" onclick="closeMenu()">How it works</a>
-  <a href="#ai-tools" onclick="closeMenu()">AI Tools</a>
   <a href="#value" onclick="closeMenu()">Why join</a>
+  <a href="#ai-tools" onclick="closeMenu()">AI Tools</a>
+  <a href="#portal" onclick="closeMenu()">Practitioner Login</a>
   <a href="#community" onclick="closeMenu()">Community Q&amp;A</a>
   <a href="#directory" onclick="closeMenu()">Member Directory</a>
-  <a href="#portal" onclick="closeMenu()">Practitioner Login</a>
   <a href="#join" class="btn-mobile-join" onclick="closeMenu()">Join the Network</a>
 </div>
 
@@ -1355,6 +1356,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
     </div>
 
     <div id="portal-dashboard">
+      <div id="portal-status-banner" class="portal-status-banner" style="display:none"></div>
       <div class="portal-tabs">
         <button class="ptab active" onclick="switchTab('profile',this)">👤 Profile</button>
         <button class="ptab" onclick="switchTab('content',this)">📎 Add Content</button>
@@ -1644,10 +1646,10 @@ body.ticker-hidden .mobile-menu{top:64px!important}
       <a href="#about">About</a>
       <a href="#" onclick="openAboutModal();return false">Our Work</a>
       <a href="#" onclick="openTOS(event)">Terms</a>
-      <a href="mailto:team@livedculture.com">Contact</a>
+      <a href="mailto:team@lgx-livedculture.org">Contact</a>
       <a href="#" onclick="showAdmin();return false">Admin ↗</a>
     </div>
-    <div class="footer-copy">&copy; 2025 LivedCulture &middot; team@livedculture.com</div>
+    <div class="footer-copy">&copy; 2026 LivedCulture &middot; team@lgx-livedculture.org</div>
   </div>
 </footer>
 
@@ -2089,13 +2091,37 @@ async function submitForm(){
 
   // 1. Create the real account via Supabase Auth (no email confirmation
   //    required — members can use the portal immediately).
+  let userId = null;
   const { data: signUpData, error: signUpErr } = await supabase.auth.signUp({ email, password: pw });
+
   if (signUpErr) {
-    alert('Could not create your account: '+signUpErr.message);
-    if(btn){btn.disabled=false;btn.textContent='Submit application →';}
-    return;
+    const alreadyRegistered = /already registered|already exists/i.test(signUpErr.message || '');
+    if (!alreadyRegistered) {
+      alert('Could not create your account: '+signUpErr.message);
+      if(btn){btn.disabled=false;btn.textContent='Submit application →';}
+      return;
+    }
+    // This email already has an auth account (likely from a previous application
+    // that was rejected/deleted). Try signing in with the password they just typed —
+    // if it matches, let them re-apply on that same account instead of dead-ending.
+    const { data: signInData, error: signInErr } = await supabase.auth.signInWithPassword({ email, password: pw });
+    if (signInErr || !signInData.user) {
+      alert("This email is already registered with a different password. If you've applied before, please use 'Forgot password' on the Practitioner Login to recover access, then re-apply from your portal. Otherwise, contact team@lgx-livedculture.org.");
+      if(btn){btn.disabled=false;btn.textContent='Submit application →';}
+      return;
+    }
+    userId = signInData.user.id;
+    // If an application already exists (and wasn't deleted) for this account, don't create a duplicate.
+    const { data: existingApp } = await supabase.from('applications').select('id,status').eq('user_id', userId).maybeSingle();
+    if (existingApp) {
+      alert('You already have an application on file (status: '+existingApp.status+'). Please sign in to the Practitioner Portal to view it.');
+      if(btn){btn.disabled=false;btn.textContent='Submit application →';}
+      return;
+    }
+  } else {
+    userId = signUpData.user?.id;
   }
-  const userId = signUpData.user?.id;
+
   if (!userId) {
     alert('Account created, but no session was returned. Please try signing in.');
     if(btn){btn.disabled=false;btn.textContent='Submit application →';}
@@ -2168,7 +2194,28 @@ async function practitionerLogin(){
   document.getElementById('portal-login-form').style.display='none';
   document.getElementById('portal-dashboard').style.display='block';
   renderPortalDashboard(app);
+  checkStatusChangeNotice(app);
   initCommunity();
+}
+function checkStatusChangeNotice(app){
+  const key='lc_last_status_'+app.id;
+  const lastSeen=localStorage.getItem(key);
+  if(lastSeen!==app.status){
+    showStatusBanner(app.status);
+    localStorage.setItem(key, app.status);
+  }
+}
+function showStatusBanner(status){
+  const banner=document.getElementById('portal-status-banner');
+  if(!banner)return;
+  const copy={
+    approved:{icon:'🎉',text:"Congratulations — your membership has been approved! You now have full access to AI tools and the practitioner community."},
+    rejected:{icon:'',text:"Your application status has been updated. Please reach out to us at team@lgx-livedculture.org if you have questions."},
+    pending:{icon:'⏳',text:"Your application is under review. We'll update you here as soon as there's a decision."}
+  }[status];
+  if(!copy)return;
+  banner.innerHTML=`<span style="font-size:1.1rem">${copy.icon}</span><span>${copy.text}</span><span class="banner-close" onclick="this.parentElement.style.display='none'" style="cursor:pointer;margin-left:auto;opacity:.6">✕</span>`;
+  banner.style.display='flex';
 }
 async function practitionerLogout(){
   await supabase.auth.signOut();
@@ -2371,7 +2418,7 @@ async function updateStatus(id,status){
   await loadAdmin();
 }
 async function deleteApp(id){
-  if(!confirm('Permanently delete this application?'))return;
+  if(!confirm("Permanently delete this application?\n\nNote: this only removes the application record. Their login account stays active — if they re-apply with the same email, our system will detect it and let them re-apply on that same account automatically. If you'd rather just decline them without losing the record, use 'Reject' instead of 'Delete'."))return;
   const { error } = await supabase.from('applications').delete().eq('id',id);
   if (error) { alert('Could not delete: '+error.message); return; }
   await loadAdmin();
