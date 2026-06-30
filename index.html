@@ -207,6 +207,11 @@ h2{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,4vw,2.7rem);font-
 #join{background:var(--bg)}
 .join-header{text-align:center;margin-bottom:2.5rem}
 .join-header .section-desc{margin:0 auto}
+.confidentiality-notice{display:flex;gap:.8rem;align-items:flex-start;max-width:680px;margin:0 auto 1.6rem;padding:1rem 1.2rem;border-radius:12px;background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.22)}
+.confidentiality-icon{font-size:1.15rem;flex-shrink:0;margin-top:.1rem}
+.confidentiality-notice strong{display:block;color:#fff;font-size:.88rem;margin-bottom:.25rem}
+.confidentiality-notice p{margin:0;color:#d4d4e8;font-size:.8rem;line-height:1.65}
+.confidentiality-notice a{color:var(--cyan);text-decoration:underline}
 .form-stepper{display:flex;justify-content:center;align-items:center;gap:0;margin-bottom:2.5rem}
 .step-item{display:flex;flex-direction:column;align-items:center;gap:.35rem}
 .step-dot{width:34px;height:34px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;color:var(--muted);transition:all .3s}
@@ -856,6 +861,13 @@ body.ticker-hidden .mobile-menu{top:64px!important}
       <div class="section-label">Apply</div>
       <h2>Join the Practitioner Network</h2>
       <p class="section-desc">We review every application personally — you'll hear back within 48 hours.</p>
+    </div>
+    <div class="confidentiality-notice">
+      <span class="confidentiality-icon">🔒</span>
+      <div>
+        <strong>Your information stays private.</strong>
+        <p>Anything you share here is used only to review your application and, if approved, to build your practitioner profile within this network — it is never sold or shared with third parties without your explicit consent. Your data is stored with industry-standard encryption and access controls via our infrastructure provider (Supabase), with login credentials never visible to our team. You can request access, correction, or deletion of your data anytime by writing to <a href="mailto:team@lgx-livedculture.org">team@lgx-livedculture.org</a>.</p>
+      </div>
     </div>
     <div class="form-stepper" id="form-stepper">
       <div class="step-item"><div class="step-dot active" id="dot-1">1</div><div class="step-label active" id="lbl-1">Who you are</div></div>
@@ -2860,7 +2872,7 @@ function getForum(){return _forumCache;}
 function getAnnouncements(){return _annCache;}
 
 /* ── LIVE TICKER ── */
-let tickerItems=[], tickerIdx=0, tickerTimer=null;
+let tickerItems=[], tickerIdx=0, tickerTimer=null, tickerRebuildTimer=null;
 function buildTickerItems(){
   const items=[];
   const ann=getAnnouncements().filter(a=>a.active).slice(0,5);
@@ -2887,8 +2899,13 @@ function buildTickerItems(){
 function rotateTicker(){
   const track=document.getElementById('ticker-track');
   if(!track||!tickerItems.length) return;
-  const old=track.querySelector('.ticker-item.active');
-  if(old){old.classList.remove('active');old.classList.add('leaving');setTimeout(()=>old.remove(),550);}
+  // Remove ALL existing items (not just the active one) to prevent overlapping
+  // ticker text when this gets triggered close together from multiple data refreshes.
+  track.querySelectorAll('.ticker-item').forEach(el=>{
+    el.classList.remove('active');
+    el.classList.add('leaving');
+    setTimeout(()=>el.remove(),550);
+  });
   tickerIdx=(tickerIdx+1)%tickerItems.length;
   const item=tickerItems[tickerIdx];
   const div=document.createElement('div');
@@ -2903,11 +2920,13 @@ function initTicker(){
   rotateTicker();
   if(tickerTimer) clearInterval(tickerTimer);
   tickerTimer=setInterval(rotateTicker,5000);
-  setInterval(()=>{tickerItems=buildTickerItems();},30000);
+  if(tickerRebuildTimer) clearInterval(tickerRebuildTimer);
+  tickerRebuildTimer=setInterval(()=>{tickerItems=buildTickerItems();},30000);
 }
 function dismissTicker(){
   document.body.classList.add('ticker-hidden');
   if(tickerTimer) clearInterval(tickerTimer);
+  if(tickerRebuildTimer) clearInterval(tickerRebuildTimer);
 }
 
 /* ── COMMUNITY Q&A ── */
