@@ -2209,7 +2209,11 @@ async function practitionerLogin(){
   const { data, error } = await supabase.auth.signInWithPassword({ email:em, password:pw });
   if (error || !data.user) { errEl.textContent='Incorrect email or password. Please try again.'; errEl.style.display='block'; return; }
   const { data: app, error: appErr } = await supabase.from('applications').select('*').eq('user_id', data.user.id).single();
-  if (appErr || !app) { errEl.textContent='Signed in, but no application found for this account. Please contact us.'; errEl.style.display='block'; return; }
+  if (appErr || !app) {
+    errEl.innerHTML = 'No application found for this account — it may have been removed. <a href="#join" style="color:#fff;font-weight:700;text-decoration:underline">Click here to (re)apply →</a>';
+    errEl.style.display='block';
+    return;
+  }
   errEl.style.display='none';
   portalUser=app;
   document.getElementById('portal-login-form').style.display='none';
