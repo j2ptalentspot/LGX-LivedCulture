@@ -2207,6 +2207,18 @@ async function submitForm(){
   // Seed knowledge base from submission
   if(inserted.bio) addKBEntry('framework','Practitioner: '+inserted.full_name,inserted.bio+'\n\nExpertise: '+(inserted.domains||[]).join(', '),'form',{name:inserted.full_name,role:inserted.role},[...(inserted.domains||[]).slice(0,5),...(inserted.practitioner_types||[]).slice(0,2)]);
   await refreshApps();
+  // Send application-received confirmation email (fire-and-forget, don't block on failure)
+  try {
+    const { data: sess } = await supabase.auth.getSession();
+    const tok = sess?.session?.access_token;
+    if (tok) {
+      fetch(SUPABASE_URL+'/functions/v1/send-email', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
+        body:JSON.stringify({type:'application_received',to:inserted.email,name:inserted.full_name})
+      });
+    }
+  } catch(e){ console.warn('Email notification failed silently:', e); }
   document.getElementById('form-container').style.display='none';
   document.getElementById('form-stepper').style.display='none';
   document.getElementById('success-view').style.display='block';
@@ -2461,6 +2473,21 @@ function renderTable(apps,filter){
 async function updateStatus(id,status){
   const { error } = await supabase.from('applications').update({status}).eq('id',id);
   if (error) { alert('Could not update status: '+error.message); return; }
+  // Send status-change email to the member (fire-and-forget)
+  try {
+    const app = getApps().find(a=>a.id===id);
+    if (app && (status==='approved'||status==='rejected')) {
+      const { data: sess } = await supabase.auth.getSession();
+      const tok = sess?.session?.access_token;
+      if (tok) {
+        fetch(SUPABASE_URL+'/functions/v1/send-email', {
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
+          body:JSON.stringify({type:'status_change',to:app.email,name:app.full_name,status})
+        });
+      }
+    }
+  } catch(e){ console.warn('Status email failed silently:', e); }
   await loadAdmin();
 }
 async function deleteApp(id){
