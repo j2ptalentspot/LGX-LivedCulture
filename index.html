@@ -2209,15 +2209,11 @@ async function submitForm(){
   await refreshApps();
   // Send application-received confirmation email (fire-and-forget, don't block on failure)
   try {
-    const { data: sess } = await supabase.auth.getSession();
-    const tok = sess?.session?.access_token;
-    if (tok) {
-      fetch(SUPABASE_URL+'/functions/v1/send-email', {
-        method:'POST',
-        headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
-        body:JSON.stringify({type:'application_received',to:inserted.email,name:inserted.full_name})
-      });
-    }
+    fetch(SUPABASE_URL+'/functions/v1/send-email', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-send-secret':'lc-email-2026'},
+      body:JSON.stringify({type:'application_received',to:inserted.email,name:inserted.full_name})
+    });
   } catch(e){ console.warn('Email notification failed silently:', e); }
   document.getElementById('form-container').style.display='none';
   document.getElementById('form-stepper').style.display='none';
@@ -2477,15 +2473,11 @@ async function updateStatus(id,status){
   try {
     const app = getApps().find(a=>a.id===id);
     if (app && (status==='approved'||status==='rejected')) {
-      const { data: sess } = await supabase.auth.getSession();
-      const tok = sess?.session?.access_token;
-      if (tok) {
-        fetch(SUPABASE_URL+'/functions/v1/send-email', {
-          method:'POST',
-          headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
-          body:JSON.stringify({type:'status_change',to:app.email,name:app.full_name,status})
-        });
-      }
+      fetch(SUPABASE_URL+'/functions/v1/send-email', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-send-secret':'lc-email-2026'},
+        body:JSON.stringify({type:'status_change',to:app.email,name:app.full_name,status})
+      });
     }
   } catch(e){ console.warn('Status email failed silently:', e); }
   await loadAdmin();
