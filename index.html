@@ -886,7 +886,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
         <p class="step-desc">Fields marked * are required.</p>
         <div class="form-row">
           <div class="form-group"><label>Full name *</label><input type="text" id="full_name" placeholder="Jane Smith"></div>
-          <div class="form-group"><label>Email address *</label><input type="email" id="email" placeholder="jane@company.com"></div>
+          <div class="form-group"><label>Email address *</label><input type="email" id="email" placeholder="jane@company.com" onblur="checkExistingEmail(this.value)"><div id="email-account-status" style="display:none;font-size:.78rem;margin-top:.35rem;padding:.4rem .7rem;border-radius:6px"></div></div>
         </div>
         <div class="form-row">
           <div class="form-group"><label>Mobile number *</label><input type="tel" id="mobile" placeholder="+91 98765 43210"></div>
@@ -2115,6 +2115,51 @@ function esc(s){return(s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt
 function getApps(){return _appsCache;}
 
 /* ── FORM SUBMIT ── */
+async function checkExistingEmail(email){
+  email = email.trim();
+  const statusEl = document.getElementById('email-account-status');
+  if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    statusEl.style.display='none';
+    return;
+  }
+  // Try a silent sign-in with a dummy password just to probe whether an account exists.
+  // Supabase returns 'Invalid login credentials' for existing accounts, 
+  // and 'Email not confirmed' or similar for unconfirmed ones —
+  // but the cleanest probe is checking the applications table directly via anon key.
+  const { data, error } = await supabase
+    .from('applications')
+    .select('status, full_name')
+    .eq('email', email)
+    .maybeSingle();
+
+  if(error || !data){
+    // No application found — email is free to use, show nothing
+    statusEl.style.display='none';
+    return;
+  }
+
+  // Found an existing application — show relevant guidance
+  const name = data.full_name ? data.full_name.split(' ')[0] : '';
+  const status = data.status;
+  let msg = '', bg = '', color = '';
+
+  if(status === 'approved'){
+    msg = `${name ? name+', you\'re' : 'You\'re'} already an approved member! <a href="#portal" style="color:#7c6fff;font-weight:700">Sign in to your portal →</a>`;
+    bg = 'rgba(34,197,94,.1)'; color = '#22c55e';
+  } else if(status === 'pending'){
+    msg = `${name ? name+', your' : 'Your'} application is already under review. <a href="#portal" style="color:#7c6fff;font-weight:700">Sign in to check your status →</a>`;
+    bg = 'rgba(251,191,36,.1)'; color = '#f59e0b';
+  } else if(status === 'rejected'){
+    msg = `A previous application for this email was not approved. To re-apply, please contact us at <a href="mailto:team@lgx-livedculture.org" style="color:#f87171;font-weight:700">team@lgx-livedculture.org</a> and we'll review your case.`;
+    bg = 'rgba(248,113,113,.1)'; color = '#f87171';
+  }
+
+  if(msg){
+    statusEl.innerHTML = msg;
+    statusEl.style.cssText = `display:block;font-size:.78rem;margin-top:.35rem;padding:.4rem .7rem;border-radius:6px;background:${bg};color:${color};border:1px solid ${color}33`;
+  }
+}
+
 async function submitForm(){
   if(!validateStep4())return;
   const pw=v('password');
@@ -2147,7 +2192,11 @@ async function submitForm(){
     // If an application already exists (and wasn't deleted) for this account, don't create a duplicate.
     const { data: existingApp } = await supabase.from('applications').select('id,status').eq('user_id', userId).maybeSingle();
     if (existingApp) {
-      alert('You already have an application on file (status: '+existingApp.status+'). Please sign in to the Practitioner Portal to view it.');
+      if(existingApp.status === 'rejected'){
+        alert('Your previous application was not approved. To re-apply, please contact us at team@lgx-livedculture.org and we\'ll review your case.');
+      } else {
+        alert('You already have an application on file (status: '+existingApp.status+'). Please sign in to the Practitioner Portal to view it.');
+      }
       if(btn){btn.disabled=false;btn.textContent='Submit application →';}
       return;
     }
