@@ -96,7 +96,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .nav-links a:hover{color:#fff;background:rgba(124,111,255,.14)}
 .btn-nav{font-size:.82rem;font-weight:600;color:#fff!important;background:var(--violet);padding:.45rem 1.1rem;border-radius:6px;transition:background .2s!important}
 .btn-nav:hover{background:var(--violet-d)!important}
-.btn-nav-ghost{font-size:.82rem;font-weight:500;color:var(--muted)!important;border:1px solid var(--border);padding:.4rem .9rem;border-radius:6px;transition:all .2s!important}
+.btn-nav-whatsapp{display:inline-flex;align-items:center;gap:.3rem;font-size:.82rem;font-weight:600;color:#25D366!important;border:1px solid rgba(37,211,102,.3);padding:.4rem .9rem;border-radius:6px;transition:all .2s!important;background:rgba(37,211,102,.06)}
+.btn-nav-whatsapp:hover{background:rgba(37,211,102,.15)!important;border-color:rgba(37,211,102,.5)!important}
+.whatsapp-float{position:fixed;right:1.2rem;bottom:5rem;z-index:999;display:flex;flex-direction:column;align-items:center;gap:.3rem;text-decoration:none}
+.whatsapp-float-btn{width:52px;height:52px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,211,102,.4);transition:transform .2s,box-shadow .2s}
+.whatsapp-float-btn:hover{transform:scale(1.1);box-shadow:0 6px 20px rgba(37,211,102,.5)}
+.whatsapp-float-label{font-size:.65rem;color:#25D366;font-weight:600;letter-spacing:.04em;background:rgba(0,0,0,.6);padding:.15rem .4rem;border-radius:4px}
 .btn-nav-ghost:hover{color:var(--text)!important;border-color:rgba(255,255,255,.2)!important}
 
 /* HAMBURGER */
@@ -667,6 +672,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
     <a href="#portal" class="btn-nav-ghost">Practitioner Login</a>
     <a href="#community">Community</a>
     <a href="#directory">Directory</a>
+    <a href="https://wa.me/917600450366?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20LivedCulture" target="_blank" rel="noopener" class="btn-nav-whatsapp">💬 WhatsApp</a>
     <a href="#join" class="btn-nav">Join the Network</a>
   </div>
   <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
@@ -683,6 +689,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
   <a href="#portal" onclick="closeMenu()">Practitioner Login</a>
   <a href="#community" onclick="closeMenu()">Community Q&amp;A</a>
   <a href="#directory" onclick="closeMenu()">Member Directory</a>
+  <a href="https://wa.me/917600450366?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20LivedCulture" target="_blank" rel="noopener" onclick="closeMenu()" style="color:#25D366;font-weight:600">💬 Chat on WhatsApp</a>
   <a href="#join" class="btn-mobile-join" onclick="closeMenu()">Join the Network</a>
 </div>
 
@@ -866,7 +873,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
       <span class="confidentiality-icon">🔒</span>
       <div>
         <strong>Your information stays private.</strong>
-        <p>Anything you share here is used only to review your application and, if approved, to build your practitioner profile within this network — it is never sold or shared with third parties without your explicit consent. Your data is stored with industry-standard encryption and access controls via our infrastructure provider (Supabase), with login credentials never visible to our team. You can request access, correction, or deletion of your data anytime by writing to <a href="mailto:team@lgx-livedculture.org">team@lgx-livedculture.org</a>.</p>
+        <p>Anything you share here is used only to review your application and, if approved, to build your practitioner profile within this network — it is never sold or shared with third parties without your explicit consent. Your data is stored with industry-standard encryption and access controls via our infrastructure provider (Supabase), with login credentials never visible to our team. You can request access, correction, or deletion of your data anytime by writing to <a href="mailto:lgx.livedculture@gmail.com">lgx.livedculture@gmail.com</a>.</p>
       </div>
     </div>
     <div class="form-stepper" id="form-stepper">
@@ -1661,14 +1668,14 @@ body.ticker-hidden .mobile-menu{top:64px!important}
       <a href="#about">About</a>
       <a href="#" onclick="openAboutModal();return false">Our Work</a>
       <a href="#" onclick="openTOS(event)">Terms</a>
-      <a href="mailto:team@lgx-livedculture.org">Contact</a>
+      <a href="mailto:lgx.livedculture@gmail.com">Contact</a>
       <a href="https://wa.me/917600450366?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20LivedCulture" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.3rem">
         <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         WhatsApp
       </a>
       <a href="#" onclick="showAdmin();return false">Admin ↗</a>
     </div>
-    <div class="footer-copy">&copy; 2026 LivedCulture &middot; team@lgx-livedculture.org</div>
+    <div class="footer-copy">&copy; 2026 LivedCulture &middot; lgx.livedculture@gmail.com</div>
   </div>
 </footer>
 
@@ -1800,11 +1807,11 @@ body.ticker-hidden .mobile-menu{top:64px!important}
     <p class="modal-sub">Last updated: June 2026</p>
     <h3>1. Membership</h3><p>By joining the LivedCulture Practitioner Network, you confirm that the information you provide is accurate and that you are a practicing professional in coaching, facilitation, L&amp;D, OD, HR, or a related behavioural science discipline.</p>
     <h3>2. Content License</h3><p>Any frameworks, nudge blueprints, interventions, case studies, or content you contribute are licensed to LivedCulture on a perpetual, non-exclusive basis. Your authorship and attribution will always be preserved. You retain ownership of your original intellectual property.</p>
-    <h3>3. Use of Your Profile</h3><p>With your consent, your professional profile will be listed in the LivedCulture Practitioner Directory. You may request removal at any time by writing to team@lgx-livedculture.org.</p>
+    <h3>3. Use of Your Profile</h3><p>With your consent, your professional profile will be listed in the LivedCulture Practitioner Directory. You may request removal at any time by writing to lgx.livedculture@gmail.com.</p>
     <h3>4. Commercial Opportunities</h3><p>LivedCulture may connect you with organisations seeking your expertise. Any commercial engagement will be governed by a separate agreement. LivedCulture does not take a commission unless separately agreed in writing.</p>
     <h3>5. Privacy</h3><p>Your personal data will never be sold to third parties. It will be used solely for network communications, opportunity matching, and community updates.</p>
     <h3>6. Code of Conduct</h3><p>Members are expected to engage respectfully, share knowledge in good faith, and uphold the highest professional standards.</p>
-    <h3>7. Contact</h3><p>For any questions, write to <a href="mailto:team@lgx-livedculture.org" style="color:var(--violet)">team@lgx-livedculture.org</a></p>
+    <h3>7. Contact</h3><p>For any questions, write to <a href="mailto:lgx.livedculture@gmail.com" style="color:var(--violet)">lgx.livedculture@gmail.com</a></p>
     <div style="text-align:center;margin-top:1.4rem"><button class="btn-primary" onclick="closeModal('tos-modal')">I understand — close</button></div>
   </div>
 </div>
@@ -2154,7 +2161,7 @@ async function checkExistingEmail(email){
     msg = `${name ? name+', your' : 'Your'} application is already under review. <a href="#portal" style="color:#7c6fff;font-weight:700">Sign in to check your status →</a>`;
     bg = 'rgba(251,191,36,.1)'; color = '#f59e0b';
   } else if(status === 'rejected'){
-    msg = `A previous application for this email was not approved. To re-apply, please contact us at <a href="mailto:team@lgx-livedculture.org" style="color:#f87171;font-weight:700">team@lgx-livedculture.org</a> and we'll review your case.`;
+    msg = `A previous application for this email was not approved. To re-apply, please contact us at <a href="mailto:lgx.livedculture@gmail.com" style="color:#f87171;font-weight:700">lgx.livedculture@gmail.com</a> and we'll review your case.`;
     bg = 'rgba(248,113,113,.1)'; color = '#f87171';
   }
 
@@ -2188,7 +2195,7 @@ async function submitForm(){
     // if it matches, let them re-apply on that same account instead of dead-ending.
     const { data: signInData, error: signInErr } = await supabase.auth.signInWithPassword({ email, password: pw });
     if (signInErr || !signInData.user) {
-      alert("This email is already registered with a different password. If you've applied before, please use 'Forgot password' on the Practitioner Login to recover access, then re-apply from your portal. Otherwise, contact team@lgx-livedculture.org.");
+      alert("This email is already registered with a different password. If you've applied before, please use 'Forgot password' on the Practitioner Login to recover access, then re-apply from your portal. Otherwise, contact lgx.livedculture@gmail.com.");
       if(btn){btn.disabled=false;btn.textContent='Submit application →';}
       return;
     }
@@ -2197,7 +2204,7 @@ async function submitForm(){
     const { data: existingApp } = await supabase.from('applications').select('id,status').eq('user_id', userId).maybeSingle();
     if (existingApp) {
       if(existingApp.status === 'rejected'){
-        alert('Your previous application was not approved. To re-apply, please contact us at team@lgx-livedculture.org and we\'ll review your case.');
+        alert('Your previous application was not approved. To re-apply, please contact us at lgx.livedculture@gmail.com and we\'ll review your case.');
       } else {
         alert('You already have an application on file (status: '+existingApp.status+'). Please sign in to the Practitioner Portal to view it.');
       }
@@ -2317,7 +2324,7 @@ function showStatusBanner(status){
   if(!banner)return;
   const copy={
     approved:{icon:'🎉',text:"Congratulations — your membership has been approved! You now have full access to AI tools and the practitioner community."},
-    rejected:{icon:'',text:"Your application status has been updated. Please reach out to us at team@lgx-livedculture.org if you have questions."},
+    rejected:{icon:'',text:"Your application status has been updated. Please reach out to us at lgx.livedculture@gmail.com if you have questions."},
     pending:{icon:'⏳',text:"Your application is under review. We'll update you here as soon as there's a decision."}
   }[status];
   if(!copy)return;
@@ -3365,5 +3372,13 @@ document.addEventListener('DOMContentLoaded', async ()=>{
 
 if(window.location.hash==='#admin')showAdmin();
 </script>
+<!-- FLOATING WHATSAPP BUTTON -->
+<a href="https://wa.me/917600450366?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20LivedCulture" target="_blank" rel="noopener" class="whatsapp-float" title="Chat with us on WhatsApp">
+  <div class="whatsapp-float-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </div>
+  <span class="whatsapp-float-label">Chat</span>
+</a>
+
 </body>
 </html>
