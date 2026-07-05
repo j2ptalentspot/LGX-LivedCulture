@@ -1383,6 +1383,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
         <button class="ptab active" onclick="switchTab('profile',this)">👤 Profile</button>
         <button class="ptab" onclick="switchTab('content',this)">📎 Add Content</button>
         <button class="ptab" onclick="switchTab('ai',this)">🤖 AI Tools</button>
+        <button class="ptab" onclick="switchTab('events',this)">📅 Events</button>
       </div>
       <div class="ptab-content active" id="ptab-profile">
       <div class="portal-profile" id="portal-profile-card">
@@ -1520,6 +1521,33 @@ body.ticker-hidden .mobile-menu{top:64px!important}
           <div class="ai-output" id="cq-output">
             <div class="ai-output-header"><span>Coaching Questions</span><button class="btn-copy" onclick="copyOutput('cq-body')">Copy</button></div>
             <div class="ai-output-body" id="cq-body"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVENTS TAB -->
+      <div class="ptab-content" id="ptab-events">
+        <div class="portal-uploads">
+          <h3>📅 Share an Event with the Network</h3>
+          <p style="color:var(--muted);font-size:.85rem;margin-bottom:1.2rem">Hosting a webinar, workshop, podcast, or LinkedIn Live? Share it here — approved listings are visible to all members.</p>
+          <div style="display:flex;flex-direction:column;gap:.7rem;max-width:560px">
+            <div class="form-group"><label>Event title *</label><input type="text" id="ev-title" placeholder="e.g. Coaching for Behaviour Change — Free Webinar"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Date *</label><input type="date" id="ev-date"></div>
+              <div class="form-group"><label>Format</label>
+                <select id="ev-format" style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:.62rem .85rem;color:var(--text);font-size:.87rem;font-family:inherit;outline:none">
+                  <option>Webinar</option><option>Workshop</option><option>Podcast</option><option>LinkedIn Live</option><option>Panel Discussion</option><option>Open Seminar</option><option>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group"><label>Event link (registration / join URL) *</label><input type="url" id="ev-link" placeholder="https://..."></div>
+            <div class="form-group"><label>Brief description</label><textarea id="ev-desc" style="min-height:70px" placeholder="What's it about? Who should attend?"></textarea></div>
+            <div id="ev-submit-msg" style="display:none;font-size:.8rem;padding:.4rem .7rem;border-radius:6px;background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2)"></div>
+            <button class="btn-next" onclick="submitMemberEvent()" style="align-self:flex-start">Submit for listing →</button>
+          </div>
+          <div style="margin-top:2rem">
+            <h4 style="font-size:.9rem;margin-bottom:.8rem">Upcoming Network Events</h4>
+            <div id="events-public-list"><div style="font-size:.83rem;color:var(--muted)">No events listed yet — be the first to share one.</div></div>
           </div>
         </div>
       </div>
@@ -1695,6 +1723,64 @@ body.ticker-hidden .mobile-menu{top:64px!important}
 
   <!-- PASSWORD RESET REQUESTS -->
 
+  <!-- KB PANEL -->
+  <div class="admin-ai-settings" id="admin-kb" style="display:none">
+    <div class="admin-ai-header"><h4>📚 Knowledge Base</h4></div>
+    <div class="admin-ai-body">
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.8rem">
+        <button class="kb-filter active" onclick="setKBFilter('all',this)">All</button>
+        <button class="kb-filter" onclick="setKBFilter('nudge',this)">Nudges</button>
+        <button class="kb-filter" onclick="setKBFilter('micro-coaching',this)">Coaching</button>
+        <button class="kb-filter" onclick="setKBFilter('micro-learning',this)">Learning</button>
+        <button class="kb-filter" onclick="setKBFilter('micro-intervention',this)">Interventions</button>
+        <button class="kb-filter" onclick="setKBFilter('framework',this)">Frameworks</button>
+      </div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;font-size:.78rem;color:var(--muted)">
+        <span>Total: <strong id="kb-total" style="color:var(--text)">0</strong></span>
+        <span>Nudges: <strong id="kb-nudge" style="color:var(--text)">0</strong></span>
+        <span>Coaching: <strong id="kb-coaching" style="color:var(--text)">0</strong></span>
+        <span>Learning: <strong id="kb-learning" style="color:var(--text)">0</strong></span>
+        <span>Interventions: <strong id="kb-intervention" style="color:var(--text)">0</strong></span>
+      </div>
+      <button class="btn-next" onclick="loadKnowledgeBase()" style="font-size:.8rem;padding:.4rem 1rem;margin-bottom:1rem">↻ Sync from profiles</button>
+      <div id="kb-list" style="max-height:340px;overflow-y:auto"></div>
+    </div>
+  </div>
+
+  <!-- ANNOUNCE PANEL -->
+  <div class="admin-ai-settings" id="admin-announce" style="display:none">
+    <div class="admin-ai-header"><h4>📢 Announcements & Member Notifications</h4></div>
+    <div class="admin-ai-body">
+      <div style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:1rem">
+        <input type="text" id="ann-title" placeholder="Announcement text (shown in ticker + emailed to members if checked below)" style="background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;padding:.6rem .85rem;color:var(--text);font-size:.85rem;font-family:inherit;outline:none;width:100%">
+        <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+          <select id="ann-type" style="background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;padding:.55rem .85rem;color:var(--text);font-size:.82rem;font-family:inherit;outline:none">
+            <option value="general">General</option>
+            <option value="campaign">Campaign</option>
+            <option value="discussion">Discussion</option>
+            <option value="requirement">Requirement</option>
+            <option value="urgent">Urgent</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:.4rem;font-size:.82rem;color:var(--muted);cursor:pointer">
+            <input type="checkbox" id="ann-notify-email" style="width:14px;height:14px;cursor:pointer"> Email all approved members
+          </label>
+        </div>
+        <div id="ann-notify-status" style="display:none;font-size:.78rem;padding:.35rem .7rem;border-radius:6px;background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2)"></div>
+        <button class="btn-next" onclick="postAnnouncement()" style="align-self:flex-start;font-size:.85rem;padding:.5rem 1.2rem">Post announcement →</button>
+      </div>
+      <div id="ann-list"></div>
+    </div>
+  </div>
+
+  <!-- MEMBER EVENTS PANEL -->
+  <div class="admin-ai-settings" id="admin-events" style="display:none">
+    <div class="admin-ai-header"><h4>📅 Member Events & Listings</h4></div>
+    <div class="admin-ai-body">
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:.8rem">Events submitted by members appear here for review. Approve to make them visible in the community section.</p>
+      <div id="admin-events-list"><div style="font-size:.83rem;color:var(--muted);padding:1rem 0">No event submissions yet.</div></div>
+    </div>
+  </div>
+
   <!-- AI SETTINGS -->
   <div class="admin-ai-settings" id="admin-ai-settings" style="display:none">
     <div class="admin-ai-header">
@@ -1730,6 +1816,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
       <button class="btn-icon" style="background:rgba(124,111,255,.1);border-color:rgba(124,111,255,.25);color:var(--violet)" onclick="toggleAISettings()">🤖 AI Settings</button>
       <button class="btn-icon" style="background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.2);color:#34d399" onclick="toggleKB()">📚 Knowledge Base</button>
       <button class="btn-icon" style="background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.2);color:#fbbf24" onclick="toggleAnnounce()">📢 Announce</button>
+      <button class="btn-icon" style="background:rgba(34,211,238,.08);border-color:rgba(34,211,238,.2);color:var(--cyan)" onclick="toggleEvents()">📅 Events</button>
       <button class="btn-icon" style="background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.2);color:#fbbf24" onclick="toggleResetPanel()">🔑 Reset Requests <span id="reset-badge" style="display:none;background:#fbbf24;color:#000;font-size:.62rem;font-weight:700;padding:.1rem .35rem;border-radius:100px;margin-left:.2rem"></span></button>
     </div>
     <table><thead><tr><th>Name &amp; Email</th><th>Role</th><th>Location</th><th>Type(s)</th><th>Status</th><th>Applied</th><th>Actions</th></tr></thead>
@@ -2766,12 +2853,64 @@ function loadResetRequests() {
 const _origLoadAdmin = typeof loadAdmin === 'function' ? loadAdmin : null;
 
 /* ── AI TOOLS ── */
+async function submitMemberEvent(){
+  if(!portalUser){ alert('Please log in first.'); return; }
+  const title = document.getElementById('ev-title')?.value.trim();
+  const date = document.getElementById('ev-date')?.value;
+  const link = document.getElementById('ev-link')?.value.trim();
+  const format = document.getElementById('ev-format')?.value;
+  const desc = document.getElementById('ev-desc')?.value.trim();
+  const msgEl = document.getElementById('ev-submit-msg');
+  if(!title||!date||!link){
+    msgEl.style.cssText='display:block;font-size:.8rem;padding:.4rem .7rem;border-radius:6px;background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.2)';
+    msgEl.textContent='Please fill in title, date and event link.'; return;
+  }
+  const { error } = await supabase.from('member_events').insert({
+    title, event_date:date, format, link, description:desc,
+    host_name:portalUser.full_name, host_role:portalUser.role,
+    user_id:portalUser.user_id||portalUser.id, approved:false
+  });
+  if(error){
+    msgEl.style.cssText='display:block;font-size:.8rem;padding:.4rem .7rem;border-radius:6px;background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.2)';
+    msgEl.textContent='Could not submit: '+error.message; return;
+  }
+  msgEl.style.cssText='display:block;font-size:.8rem;padding:.4rem .7rem;border-radius:6px;background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2)';
+  msgEl.textContent='✓ Submitted! Your event will be listed once reviewed by our team.';
+  ['ev-title','ev-date','ev-link','ev-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  loadPublicEvents();
+}
+async function loadPublicEvents(){
+  const listEl = document.getElementById('events-public-list');
+  if(!listEl) return;
+  const { data, error } = await supabase.from('member_events').select('*').eq('approved',true).order('event_date',{ascending:true});
+  if(error||!data||!data.length){ listEl.innerHTML='<div style="font-size:.83rem;color:var(--muted)">No approved events listed yet.</div>'; return; }
+  const today = new Date().toISOString().split('T')[0];
+  const upcoming = data.filter(e=>e.event_date>=today);
+  if(!upcoming.length){ listEl.innerHTML='<div style="font-size:.83rem;color:var(--muted)">No upcoming events — check back soon.</div>'; return; }
+  listEl.innerHTML=upcoming.map(e=>`
+    <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.1rem;margin-bottom:.6rem">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
+        <div>
+          <div style="font-weight:600;font-size:.9rem;color:#fff">${esc(e.title)}</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem">
+            📅 ${new Date(e.event_date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}
+            &nbsp;·&nbsp; ${esc(e.format||'Event')}
+            &nbsp;·&nbsp; by ${esc(e.host_name||'')}${e.host_role?', '+esc(e.host_role):''}
+          </div>
+          ${e.description?`<div style="font-size:.8rem;color:#d4d4e8;margin-top:.35rem">${esc(e.description)}</div>`:''}
+        </div>
+        <a href="${esc(e.link)}" target="_blank" rel="noopener" class="btn-primary" style="font-size:.75rem;padding:.35rem .85rem;white-space:nowrap">Register / Join →</a>
+      </div>
+    </div>
+  `).join('');
+}
 function switchTab(tab, btn) {
   document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.ptab-content').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('ptab-' + tab).classList.add('active');
   if (tab === 'ai') renderAIStatus();
+  if (tab === 'events') loadPublicEvents();
 }
 
 async function callAI(prompt, btnId, outputId, bodyId, errorId) {
@@ -3288,14 +3427,72 @@ function exportKB(){
 async function postAnnouncement(){
   const title=document.getElementById('ann-title')?.value.trim();
   if(!title) return;
+  const notifyEmail = document.getElementById('ann-notify-email')?.checked;
+  const statusEl = document.getElementById('ann-notify-status');
   const { error } = await supabase.from('announcements').insert({
     title, type:document.getElementById('ann-type').value, active:true
   });
   if (error) { alert('Could not post announcement: '+error.message); return; }
   document.getElementById('ann-title').value='';
+  // Send bulk email to all approved members if checkbox ticked
+  if(notifyEmail){
+    const approved = getApps().filter(a=>a.status==='approved' && a.email);
+    let sent=0, failed=0;
+    statusEl.style.display='block';
+    statusEl.textContent=`Sending to ${approved.length} members...`;
+    for(const member of approved){
+      try{
+        const res = await fetch(SUPABASE_URL+'/functions/v1/send-email',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','x-send-secret':'lc-email-2026'},
+          body:JSON.stringify({type:'announcement',to:member.email,name:member.full_name,message:title})
+        });
+        if(res.ok) sent++; else failed++;
+      } catch(e){ failed++; }
+    }
+    statusEl.textContent=`✓ Sent to ${sent} member${sent!==1?'s':''}${failed?` (${failed} failed)`:''}`;
+    setTimeout(()=>statusEl.style.display='none',5000);
+  }
   await refreshAnnouncements();
   renderAnnouncements();
   initTicker();
+}
+function toggleEvents(){
+  const el=document.getElementById('admin-events');
+  el.style.display=el.style.display==='none'?'block':'none';
+  if(el.style.display==='block') loadMemberEvents();
+}
+async function loadMemberEvents(){
+  const { data, error } = await supabase.from('member_events').select('*').order('created_at',{ascending:false});
+  const list = document.getElementById('admin-events-list');
+  if(error||!data||!data.length){ list.innerHTML='<div style="font-size:.83rem;color:var(--muted);padding:1rem 0">No event submissions yet.</div>'; return; }
+  list.innerHTML=data.map(e=>`
+    <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;margin-bottom:.5rem">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem">
+        <div>
+          <div style="font-weight:600;font-size:.88rem">${esc(e.title)}</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem">${esc(e.event_date||'')} · ${esc(e.format||'')} · by ${esc(e.host_name||'')}</div>
+          <div style="font-size:.78rem;color:#d4d4e8;margin-top:.3rem">${esc(e.description||'')}</div>
+          ${e.link?`<a href="${esc(e.link)}" target="_blank" style="font-size:.75rem;color:var(--cyan);margin-top:.3rem;display:inline-block">↗ ${esc(e.link)}</a>`:''}
+        </div>
+        <div style="display:flex;gap:.4rem;flex-shrink:0">
+          <button class="kb-btn" style="border-color:rgba(52,211,153,.3);color:#34d399" onclick="approveEvent('${e.id}')">${e.approved?'✓ Live':'Approve'}</button>
+          <button class="kb-btn kb-btn-del" onclick="deleteEvent('${e.id}')">✕</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+async function approveEvent(id){
+  const { error } = await supabase.from('member_events').update({approved:true}).eq('id',id);
+  if(error){ alert('Could not approve: '+error.message); return; }
+  loadMemberEvents();
+}
+async function deleteEvent(id){
+  if(!confirm('Delete this event listing?')) return;
+  const { error } = await supabase.from('member_events').delete().eq('id',id);
+  if(error){ alert('Could not delete: '+error.message); return; }
+  loadMemberEvents();
 }
 function renderAnnouncements(){
   const anns=getAnnouncements();
