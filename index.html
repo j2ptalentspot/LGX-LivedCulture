@@ -670,6 +670,7 @@ body.ticker-hidden .mobile-menu{top:64px!important}
     <a href="#how">How it works</a>
     <a href="#value">Why join</a>
     <a href="#ai-tools">AI Tools</a>
+    <a href="#pulse">Pulse</a>
     <a href="#community">Community</a>
     <a href="#directory">Directory</a>
     <a href="https://wa.me/917600450366?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20LivedCulture" target="_blank" rel="noopener" class="btn-nav-whatsapp">💬 WhatsApp</a>
@@ -823,6 +824,26 @@ body.ticker-hidden .mobile-menu{top:64px!important}
 </section>
 <div class="divider"></div>
 
+
+<!-- PULSE -->
+<section id="pulse">
+  <div class="section-inner">
+    <div class="value-header">
+      <div>
+        <div class="section-label">Trend Radar</div>
+        <h2>The <em>Pulse</em> of the field</h2>
+        <p class="section-desc">Curated, original-commentary takes on the most relevant OD, OE, L&amp;D, Coaching, HR and Behavioural Science research and reporting — refreshed regularly, always credited back to the source.</p>
+      </div>
+    </div>
+    <div id="pulse-grid" class="value-grid" style="margin-top:2rem">
+      <div class="empty-state" id="pulse-empty">
+        <div class="empty-icon">📡</div>
+        <p>New Pulse items are on their way. Check back soon.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
 
 <!-- AI TOOLS TEASER -->
 <section id="ai-tools">
@@ -1963,6 +1984,41 @@ async function refreshAnnouncements(){
   const { data, error } = await supabase.from('announcements').select('*').order('created_at', { ascending:false });
   if (error) { console.error('refreshAnnouncements', error); return; }
   _annCache = (data||[]).map(a=>({ id:a.id, title:a.title, type:a.type, active:a.active, timestamp:a.created_at }));
+}
+let _pulseCache = [];
+async function refreshPulse(){
+  const { data, error } = await supabase.from('pulse_entries').select('*').eq('status','published').order('created_at', { ascending:false }).limit(12);
+  if (error) { console.error('refreshPulse', error); return; }
+  _pulseCache = data || [];
+}
+function renderPulse(){
+  const grid = document.getElementById('pulse-grid');
+  if (!grid) return;
+  if (!_pulseCache.length) {
+    grid.innerHTML = '<div class="empty-state" id="pulse-empty"><div class="empty-icon">\ud83d\udce1</div><p>New Pulse items are on their way. Check back soon.</p></div>';
+    return;
+  }
+  grid.innerHTML = _pulseCache.map(p => {
+    const tags = (p.domain_tags||'').split(',').map(t=>t.trim()).filter(Boolean)
+      .map(t=>'<span class="sci-tag" style="margin:.15rem .3rem .15rem 0;display:inline-block">'+escapeHtml(t)+'</span>').join('');
+    const date = p.created_at ? new Date(p.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '';
+    return '<div class="value-card">' +
+      '<div class="value-icon">\ud83d\udce1</div>' +
+      '<h3>'+escapeHtml(p.title||'')+'</h3>' +
+      '<p>'+escapeHtml(p.insight||'')+'</p>' +
+      '<div style="margin-top:.8rem">'+tags+'</div>' +
+      '<div style="margin-top:.9rem;font-size:.76rem;color:var(--muted)">'+
+        (p.source_name?('Source: '+escapeHtml(p.source_name)):'') +
+        (date?(' · '+date):'') +
+      '</div>' +
+      (p.source_url?('<a href="'+escapeHtml(p.source_url)+'" target="_blank" rel="noopener" style="display:inline-block;margin-top:.6rem;font-size:.8rem;color:var(--violet);font-weight:600;text-decoration:none">Read the original \u2192</a>'):'') +
+    '</div>';
+  }).join('');
+}
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, function(m){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m];
+  });
 }
 async function refreshAllData(){
   await Promise.all([refreshApps(), refreshKB(), refreshForum(), refreshAnnouncements()]);
@@ -3546,6 +3602,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   }
   await refreshAllData();
   await refreshDirectory();
+  await refreshPulse(); renderPulse();
   initTicker();
   initCommunity();
 
